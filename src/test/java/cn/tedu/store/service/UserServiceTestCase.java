@@ -75,6 +75,12 @@ public class UserServiceTestCase {
 				.md5DigestAsHex((salt + password + salt).getBytes());
 		System.err.println(result);
 	}
+
+	@Test
+    public void syso(){
+        System.out.println("hello");
+    }
+
 	
 }
 
