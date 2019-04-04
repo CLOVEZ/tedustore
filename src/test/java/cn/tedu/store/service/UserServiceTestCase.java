@@ -36,18 +36,7 @@ public class UserServiceTestCase {
 		}
 	}
 	
-	@Test
-	public void login() {
-		try {
-			String username = "root";
-			String password = "1234";
-			User data = service.login(username, password);
-			System.err.println(data);
-		} catch (ServiceException e) {
-			System.err.println(e.getClass().getName());
-			System.err.println(e.getMessage());
-		}
-	}
+
 	
 	@Test
 	public void changePassword() {
