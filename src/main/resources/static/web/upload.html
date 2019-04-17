@@ -141,7 +141,7 @@
 							<div class="form-group">
 								<label class="col-md-2 control-label">选择头像:</label>
 								<div class="col-md-1">
-									<img src="../images/index/user.jpg" class="img-responsive" />
+									<img src="../images/index/user.jpg" class="img-responsive" id="img-avatar" />
 								</div>
 								<div class="clearfix"></div>
 								<div class="col-md-offset-2 col-md-4">
@@ -158,7 +158,13 @@
 				</div>
 			</div>
 		</div>
+		<script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"/>
 		<script type="text/javascript">
+			$(document).ready(function () {
+				if($.cookie("avatar")!=null){
+					$("#img-avatar").attr("src",$.cookie("avatar"));
+				}
+			});
 			$("#btn-change-avatar").click(function () {
 				$.ajax({
 					"url":"/users/change_avatar",
@@ -175,7 +181,7 @@
 						}
 					},
 					"error":function () {
-						alert("您的登陆信息已过期，请重新登陆")
+						alert(json.message)
 						location.href("/web/login.html");
 					}
 				});

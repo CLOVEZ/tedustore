@@ -153,6 +153,9 @@
 			"success":function(json) {
 				if (json.state == 200) {
 					alert("登录成功！");
+					//将用户名和头像保存到cookie中
+					$.cookie("username",json.data.username,{exipre:7});
+					$.cookie("avatar",json.data.avatar,{exipre:7});
 				} else {
 					alert(json.message);
 				}
