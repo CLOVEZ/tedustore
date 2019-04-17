@@ -47,8 +47,12 @@ public interface UserMapper {
 
 	Integer updateInfo(User user);
 
-
-
+	Integer updateAvatar(
+			@Param("uid") Integer uid,
+			@Param("avatar") String avatar,
+			@Param("modifiedUser") String modifiedUser,
+			@Param("modifiedTime") Date modifiedTime
+	);
 
 
 

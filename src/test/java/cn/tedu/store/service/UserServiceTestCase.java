@@ -22,7 +22,7 @@ public class UserServiceTestCase {
 	public void reg() {
 		try {
 			User user = new User();
-			user.setUsername("upper");
+			user.setUsername("chenxt");
 			user.setPassword("1234");
 			user.setGender(1);
 			user.setPhone("13800138008");
@@ -41,7 +41,7 @@ public class UserServiceTestCase {
 	@Test
 	public void changePassword() {
 		try {
-			Integer uid = 1000;
+			Integer uid = 1;
 			String username = "超级管理员";
 			String oldPassword = "1234";
 			String newPassword = "8888";

@@ -52,6 +52,8 @@ public interface IUserService {
 
 	User getByUid(Integer uid) throws UserNotFoundException;
 
+	void changeAvatar(Integer uid, String avatar,String username)throws UserNotFoundException,UpdateException;
+
 }
 
 

@@ -62,6 +62,17 @@ public class UserMapperTestCase {
 		System.err.println(rows);
 	}
 
+
+	@Test
+	public void updateAvatar(){
+		Integer uid = 3;
+		String avatar = "这里应该是头像的路径";
+		String modifiedUser ="超级管理员";
+		Date modifiedTime = new Date();
+		Integer rows = mapper.updateAvatar(uid,avatar,modifiedUser,modifiedTime);
+		System.err.println("rows="+rows);
+	}
+
 	
 }
 

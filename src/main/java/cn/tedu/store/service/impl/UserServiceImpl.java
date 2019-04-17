@@ -235,6 +235,35 @@ public class UserServiceImpl implements IUserService {
 		return data	;
 	}
 
+	@Override
+	public void changeAvatar(Integer uid, String avatar , String username){
+		//根据参数uid查询用户数据
+		User data = userMapper.findByUid(uid);
+
+		//判断用户数据是否为null，是，抛出异常
+		if(data == null){
+			throw new UserNotFoundException("用户未找到");
+		}
+
+		//判断用户数据张的isDelete是否为1 ，是，抛出异常
+		if(data.getIsDelete()==1){
+			throw new UserNotFoundException("访问的用户数据不存在");
+		}
+		//创建当前时间对象
+		Date now = new Date();
+		//调用持久层的方法执行更新头像，并获取返回值
+		Integer rows =  userMapper.updateAvatar(uid,avatar,username,now);
+		System.err.println(rows);
+		//判断返回值是否不为1 ，是，抛出异常
+		if(rows!=1){
+			throw new UpdateException("修改头像错误，更新数据是发生未知错误");
+		}
+	}
+
+
+
+
+
 
 }
 
