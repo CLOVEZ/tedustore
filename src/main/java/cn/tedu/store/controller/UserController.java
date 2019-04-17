@@ -2,6 +2,9 @@ package cn.tedu.store.controller;
 
 import cn.tedu.store.entity.User;
 import cn.tedu.store.service.IUserService;
+import cn.tedu.store.service.ex.FileEmptyException;
+import cn.tedu.store.service.ex.FileSizeException;
+import cn.tedu.store.service.ex.FileTypeException;
 import cn.tedu.store.util.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,12 +104,21 @@ public class UserController extends BaseController {
 			HttpServletRequest request,
 			@RequestParam("avatar")MultipartFile avatar,
 			HttpSession session){
-
-
-
-		//TODO 判断文件大小：Springboot默认不支持上传大文件
-		//TODO 判断文件类型
-
+		if(avatar.isEmpty()){
+			throw new FileEmptyException("上传头像失败，未选择头像文件，或选择的文件为空");
+		}
+		//检查文件大小是否超标
+		long size = avatar.getSize();
+		if(size>UPLOAD_AVATAR_MAX_SIZE){
+			throw new FileSizeException("上传头像失败！不允许使用超过" + UPLOAD_AVATAR_MAX_SIZE / 1024 + "KB的文件！");
+		}
+		// 检查文件类型是否在允许的范围之内
+		String contentType = avatar.getContentType();
+		if (!UPLOAD_AVATAR_TYPES.contains(contentType)) {
+			// 抛出异常：FileTypeException
+			throw new FileTypeException(
+					"上传头像失败！不支持所提交的文件类型！允许的文件类型有：" + UPLOAD_AVATAR_TYPES);
+		}
 		//确定保存文件的文件夹的File对象
 		String parentPath = request.getServletContext().getRealPath(UPLOAD_DIR);
 		File parent =  new File(parentPath);

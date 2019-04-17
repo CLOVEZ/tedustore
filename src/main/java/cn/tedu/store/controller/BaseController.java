@@ -51,6 +51,21 @@ public abstract class BaseController {
 		} else if (e instanceof UpdateException) {
 			// 501-插入数据异常
 			rr.setState(501);
+		}  else if (e instanceof FileEmptyException) {
+			// 600-文件为空的异常，通常是上传文件时，没有选择文件就提交了请求，或者选择的文件是0字节的。
+			rr.setState(600);
+		} else if (e instanceof FileSizeException) {
+			// 601-文件大小异常，通常为上传的文件的大小超出了限制
+			rr.setState(601);
+		} else if (e instanceof FileTypeException) {
+			// 602-文件类型异常，通常是尝试上传不支持的类型的文件
+			rr.setState(602);
+		} else if (e instanceof FileStateException) {
+			// 603-上传文件时操作状态异常
+			rr.setState(603);
+		} else if (e instanceof FileIOException) {
+			// 604-上传文件时读写异常
+			rr.setState(604);
 		}
 		
 		return rr;
