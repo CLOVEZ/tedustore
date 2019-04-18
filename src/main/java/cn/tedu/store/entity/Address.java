@@ -13,7 +13,7 @@ public class Address extends BaseEntity {
     private String tel;
     private String phone;
     private String tag;
-    private String isDefault;
+    private Integer isDefault;
 
     @Override
     public String toString() {
@@ -130,11 +130,11 @@ public class Address extends BaseEntity {
         this.tag = tag;
     }
 
-    public String getIsDefault() {
+    public Integer getIsDefault() {
         return isDefault;
     }
 
-    public void setIsDefault(String isDefault) {
+    public void setIsDefault(Integer isDefault) {
         this.isDefault = isDefault;
     }
 }

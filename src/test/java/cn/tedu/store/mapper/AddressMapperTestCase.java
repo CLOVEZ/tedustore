@@ -23,8 +23,12 @@ public class AddressMapperTestCase {
         address.setZip("000000");
         Integer rows = mapper.insert(address);
         System.err.println(rows);
-
-
+    }
+    @Test
+    public void countByUid(){
+        Integer uid = 8 ;
+        Integer count = mapper.countByUid(uid);
+        System.err.println("count:"+count);
     }
 
 
