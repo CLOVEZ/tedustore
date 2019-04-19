@@ -1,6 +1,8 @@
 package cn.tedu.store.entity;
 
 public class Address extends BaseEntity {
+
+    private static final long serialVersionUID = -250866843883489000L;
     private Integer aid;
     private Integer uid;
     private String name;
