@@ -36,6 +36,19 @@
 		WHERE
 			uid=#{uid}
 	</select>
+	<select id="findByUid" resultType="cn.tedu.store.entity.Address">
+		SELECT
+			aid,name,
+			district,address,
+			phone,tag,
+			is_default AS isDefault
+		FROM
+			t_address
+		WHERE
+			uid=#{uid}
+		ORDER BY
+			is_default desc,modified_time desc
+	</select>
 </mapper>
 
 

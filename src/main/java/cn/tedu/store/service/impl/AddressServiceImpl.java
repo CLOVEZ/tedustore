@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AddressServiceImpl implements IAddressService {
@@ -30,6 +31,16 @@ public class AddressServiceImpl implements IAddressService {
         insert(address);
 
     }
+
+    @Override
+    public List<Address> getByUid(Integer uid) {
+        return  findByUid(uid);
+    }
+
+    private List<Address> findByUid(Integer uid){
+        return mapper.findByUid(uid);
+    }
+
 
     /**
      * 增加收货地址

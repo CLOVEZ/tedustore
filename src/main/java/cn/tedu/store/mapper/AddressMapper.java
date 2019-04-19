@@ -2,6 +2,8 @@ package cn.tedu.store.mapper;
 
 import cn.tedu.store.entity.Address;
 
+import java.util.List;
+
 /**
  * 处理用户数据的持久层接口
  */
@@ -20,6 +22,8 @@ public interface AddressMapper {
 	 * @return 收货地址的数量
 	 */
 	Integer countByUid(Integer uid);
+
+	List<Address> findByUid(Integer uid);
 
 }
 
