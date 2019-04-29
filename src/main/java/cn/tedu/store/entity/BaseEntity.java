@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public abstract class BaseEntity implements Serializable {
 
-    private static final long serialVersionUID = -6185124879935579311L;
+	private static final long serialVersionUID = -6185124879935579311L;
 	
 	private String createdUser;
 	private Date createdTime;

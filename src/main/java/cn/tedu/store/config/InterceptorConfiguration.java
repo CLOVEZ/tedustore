@@ -11,32 +11,35 @@ import java.util.List;
 
 @Configuration
 public class InterceptorConfiguration
-        implements WebMvcConfigurer {
+		implements WebMvcConfigurer {
 
-    @Override
-    public void addInterceptors(
-            InterceptorRegistry registry) {
-        // 创建拦截器对象
-        HandlerInterceptor interceptor
-                = new LoginInterceptor();
+	@Override
+	public void addInterceptors(
+			InterceptorRegistry registry) {
+		// 创建拦截器对象
+		HandlerInterceptor interceptor
+				= new LoginInterceptor();
 
-        // 白名单
-        List<String> list = new ArrayList<>();
-        list.add("/bootstrap3/**");
-        list.add("/images/**");
-        list.add("/css/**");
-        list.add("/js/**");
+		// 白名单
+		List<String> list = new ArrayList<>();
+		list.add("/bootstrap3/**");
+		list.add("/images/**");
+		list.add("/css/**");
+		list.add("/js/**");
 
-        list.add("/users/reg");
-        list.add("/users/login");
-        list.add("/web/register.html");
-        list.add("/web/login.html");
+		list.add("/districts/**");
 
-        // 添加拦截器
-        registry.addInterceptor(interceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns(list);
-    }
+		list.add("/users/reg");
+		list.add("/users/login");
+		list.add("/web/register.html");
+		list.add("/web/login.html");
 
+		// 添加拦截器
+		registry.addInterceptor(interceptor)
+				.addPathPatterns("/**")
+				.excludePathPatterns(list);
+	}
 
+	
+	
 }

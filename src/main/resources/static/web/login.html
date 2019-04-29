@@ -3,7 +3,7 @@
 
 	<head>
 
-        <meta charset="utf-8"/>
+		<meta charset="utf-8"/>
 		<title>学子商城</title>
 		<!--导入核心文件-->
 		<script src="../bootstrap3/js/holder.js"></script>
@@ -26,29 +26,29 @@
 		<header class="header">
 
 			<img src="../images/index/stumalllogo.png" alt="" />
-            <span class="pull-right"><h3><small>欢迎访问</small><b>学子商城</b></h3></span>
+			<span class="pull-right"><h3><small>欢迎访问</small><b>学子商城</b></h3></span>
 
-        </header>
+		</header>
 		<!--主体-->
 		<div class="container mycontent text-left">
 			<!--透明层 -->
 			<div class="loginDiv">
-                <h4>用户登录</h4>
-                <hr/>
+				<h4>用户登录</h4>
+				<hr/>
 				<!--表单开始-->
-                <form class="form-horizontal" id="form-login" role="form">
+				<form class="form-horizontal" id="form-login" role="form">
 					<!--用户名-->
 					<div class="form-group">
 						<label for="username" class="col-md-3 control-label">名字：</label>
 						<div class="col-md-8">
-                            <input class="form-control" id="username" name="username" placeholder="请输入用户名" type="text">
+							<input class="form-control" id="username" name="username" placeholder="请输入用户名" type="text">
 						</div>
 					</div>
 					<!--密码-->
 					<div class="form-group">
 						<label for="password" class="col-md-3 control-label"> 密码：</label>
 						<div class="col-md-8">
-                            <input class="form-control" id="password" name="password" placeholder="请输入密码" type="text">
+							<input class="form-control" id="password" name="password" placeholder="请输入密码" type="text">
 						</div>
 					</div>
 					<!-- 记住我-->
@@ -82,21 +82,21 @@
 			<div class="text-center rights container">
 				<div class="col-md-offset-2 col-md-2">
 					<span class="fa fa-thumbs-o-up"></span>
-                    <h4>品质保障</h4>
+					<h4>品质保障</h4>
 				</div>
 				<div class="col-md-2">
 					<span class="fa fa-address-card-o"></span>
 
-                    <h4>私人订制</h4>
+					<h4>私人订制</h4>
 				</div>
 				<div class="col-md-2">
 					<span class="fa fa-graduation-cap"></span>
-                    <h4>学生特供</h4>
+					<h4>学生特供</h4>
 				</div>
 				<div class="col-md-2">
 					<span class="fa fa-bitcoin"></span>
 
-                    <h4>专属特权</h4>
+					<h4>专属特权</h4>
 				</div>
 			</div>
 			<!--联系我们、下载客户端等-->
@@ -105,11 +105,11 @@
 					<div><img src="../images/index/stumalllogo.png" alt="" class="footLogo" /></div>
 					<div><img src="../images/index/footerFont.png" alt="" /></div>
 
-                </div>
+				</div>
 				<div class="col-md-4 callus text-center">
 					<div class="col-md-4">
 						<ul>
-                            <li><a href="#"><h5>买家帮助</h5></a></li>
+							<li><a href="#"><h5>买家帮助</h5></a></li>
 							<li><a href="#">新手指南</a></li>
 							<li><a href="#">服务保障</a></li>
 							<li><a href="#">常见问题</a></li>
@@ -117,14 +117,14 @@
 					</div>
 					<div class="col-md-4">
 						<ul>
-                            <li><a href="#"><h5>商家帮助</h5></a></li>
+							<li><a href="#"><h5>商家帮助</h5></a></li>
 							<li><a href="#">商家入驻</a></li>
 							<li><a href="#">商家后台</a></li>
 						</ul>
 					</div>
 					<div class="col-md-4">
 						<ul>
-                            <li><a href="#"><h5>关于我们</h5></a></li>
+							<li><a href="#"><h5>关于我们</h5></a></li>
 							<li><a href="#">关于达内</a></li>
 							<li><a href="#">联系我们</a></li>
 							<li>
@@ -147,32 +147,32 @@
 			</div>
 			<!-- 页面底部-备案号 #footer -->
 			<div class="col-md-12 text-center bottom">
-                Copyright © 2018 Tedu.cn All Rights Reserved 京ICP备08000853号-56 <a href="http://www.tedu.cn/"
-                                                                                  style="font-size: 12px"
-                                                                                  target="_blank">达内时代科技集团有限公司</a> 版权所有
+				Copyright © 2018 Tedu.cn All Rights Reserved 京ICP备08000853号-56 <a href="http://www.tedu.cn/"
+																				  style="font-size: 12px"
+																				  target="_blank">达内时代科技集团有限公司</a> 版权所有
 			</div>
 
-        </footer>
+		</footer>
 		<!--页脚结束-->
 	<script type="text/javascript">
-        $("#btn-login").click(function () {
-            var url = "/users/login";
-            var data = $("#form-login").serialize();
+		$("#btn-login").click(function () {
+			var url = "/users/login";
+			var data = $("#form-login").serialize();
 		$.ajax({
-            "url": url,
-            "data": data,
-            "type": "POST",
-            "dataType": "json",
-            "success": function (json) {
+			"url": url,
+			"data": data,
+			"type": "POST",
+			"dataType": "json",
+			"success": function (json) {
 				if (json.state == 200) {
 					alert("登录成功！");
-                    console.log("json.data.uid=" + json.data.uid);
-                    console.log("json.data.username=" + json.data.username);
-                    console.log("json.data.avatar=" + json.data.avatar);
+					console.log("json.data.uid=" + json.data.uid);
+					console.log("json.data.username=" + json.data.username);
+					console.log("json.data.avatar=" + json.data.avatar);
 
-                    $.cookie("uid", json.data.uid, {expires: 7});
-                    $.cookie("username", json.data.username, {expires: 7});
-                    $.cookie("avatar", json.data.avatar, {expires: 7});
+					$.cookie("uid", json.data.uid, {expires: 7});
+					$.cookie("username", json.data.username, {expires: 7});
+					$.cookie("avatar", json.data.avatar, {expires: 7});
 				} else {
 					alert(json.message);
 				}

@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 public class ResponseResult<T> implements Serializable {
 
-    private static final long serialVersionUID = -1626793180717240861L;
+	private static final long serialVersionUID = -1626793180717240861L;
 
 	private Integer state;
 	private String message;
@@ -23,16 +23,16 @@ public class ResponseResult<T> implements Serializable {
 		this.state = state;
 	}
 
-    public ResponseResult(Integer state, T data) {
+	public ResponseResult(Integer state, T data) {
 		super();
 		this.state = state;
-        this.data = data;
-    }
+		this.data = data;
+	}
 
-    public ResponseResult(Integer state, Exception e) {
+	public ResponseResult(Integer state, Exception e) {
 		super();
 		this.state = state;
-        this.message = e.getMessage();
+		this.message = e.getMessage();
 	}
 
 	public Integer getState() {
@@ -59,9 +59,9 @@ public class ResponseResult<T> implements Serializable {
 		this.data = data;
 	}
 
-    @Override
-    public String toString() {
-        return "ResponseResult [state=" + state + ", message=" + message + ", data=" + data + "]";
-    }
+	@Override
+	public String toString() {
+		return "ResponseResult [state=" + state + ", message=" + message + ", data=" + data + "]";
+	}
 
 }

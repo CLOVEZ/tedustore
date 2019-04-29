@@ -14,20 +14,20 @@ import javax.servlet.MultipartConfigElement;
 @MapperScan("cn.tedu.store.mapper")
 public class StoreApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(StoreApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(StoreApplication.class, args);
+	}
 
-    @Bean
-    @SuppressWarnings("deprecation")
-    public MultipartConfigElement
-    multipartConfiguration() {
-        MultipartConfigFactory factory
-                = new MultipartConfigFactory();
-        factory.setMaxRequestSize(50 * 1024 * 1024);
-        factory.setMaxFileSize(50 * 1024 * 1024);
-        return factory.createMultipartConfig();
-    }
+	@Bean
+	@SuppressWarnings("deprecation")
+	public MultipartConfigElement
+	multipartConfiguration() {
+		MultipartConfigFactory factory
+				= new MultipartConfigFactory();
+		factory.setMaxRequestSize(50 * 1024 * 1024);
+		factory.setMaxFileSize(50 * 1024 * 1024);
+		return factory.createMultipartConfig();
+	}
 
 }
 

@@ -1,6 +1,5 @@
 package cn.tedu.store.controller;
 
-
 import cn.tedu.store.entity.District;
 import cn.tedu.store.service.IDistrictService;
 import cn.tedu.store.util.ResponseResult;
@@ -14,19 +13,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("districts")
-public class DistrictController extends BaseController {
+public class DistrictController
+        extends BaseController {
+
     @Autowired
     private IDistrictService districtService;
 
-    @GetMapping
-    public ResponseResult<List<District>> getByParent(
-            @RequestParam("parent") String parent){
-        //执行查询
-        List<District> data = districtService.getByParent(parent);
-        return new ResponseResult<>(SUCCESS,data);
+    @GetMapping("/")
+    public ResponseResult<List<District>>
+    getListByParent(
+            @RequestParam("parent") String parent) {
+        List<District> data
+                = districtService
+                .getListByParent(parent);
+        return new ResponseResult<List<District>>(
+                SUCCESS, data);
     }
 
-
-
-
 }
+
+
+
+
+
+
+

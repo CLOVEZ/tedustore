@@ -4,52 +4,47 @@
 
 <mapper namespace="cn.tedu.store.mapper.AddressMapper">
 
-
-
-	<insert id="insert" useGeneratedKeys="true" keyProperty="aid">
+	<!-- 插入收货地址数据 -->
+	<!-- Integer insert(Address address) -->
+	<insert id="insert">
 		INSERT INTO t_address (
-            uid, name,
-            province, city,
-            area, district,
-            zip, address,
-            tel, phone,
-            tag, is_default,
-            created_user, created_time,
-            modified_user, modified_time
-        ) VALUES (
-            #{uid}, #{name},
-            #{province}, #{city},
-            #{area}, #{district},
-            #{zip}, #{address},
-            #{tel}, #{phone},
-            #{tag}, #{isDefault},
-            #{createdUser}, #{createdTime},
-            #{modifiedUser}, #{modifiedTime}
-        )
+			uid, receiver,
+			province, city,
+			area, district,
+			zip, address,
+			phone, tel,
+			tag, is_default,
+			created_user, created_time,
+			modified_user, modified_time
+		) VALUES (
+			#{uid}, #{receiver},
+			#{province}, #{city},
+			#{area}, #{district},
+			#{zip}, #{address},
+			#{phone}, #{tel},
+			#{tag}, #{isDefault},
+			#{createdUser}, #{createdTime},
+			#{modifiedUser}, #{modifiedTime}
+		)
 	</insert>
 
-	<select id="countByUid" resultType="java.lang.Integer">
-		SELECT
-			COUNT(aid)
-		FROM
-			t_address
-		WHERE
+	<!-- 根据用户id查询该用户的收货地址的数量 -->
+	<!-- Integer getCountByUid(Integer uid) -->
+	<select id="getCountByUid"
+			resultType="java.lang.Integer">
+		SELECT 
+			COUNT(aid) 
+		FROM 
+			t_address 
+		WHERE 
 			uid=#{uid}
 	</select>
-	<select id="findByUid" resultType="cn.tedu.store.entity.Address">
-		SELECT
-			aid,name,
-			district,address,
-			phone,tag,
-			is_default AS isDefault
-		FROM
-			t_address
-		WHERE
-			uid=#{uid}
-		ORDER BY
-			is_default desc,modified_time desc
-	</select>
+
 </mapper>
+
+
+
+
 
 
 

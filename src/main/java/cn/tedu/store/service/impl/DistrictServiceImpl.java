@@ -8,28 +8,40 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * 处理省\市\区数据的业务层实现类
- */
 @Service
 public class DistrictServiceImpl implements IDistrictService {
 
-    @Autowired
-    private DistrictMapper districtMapper;
+	@Autowired
+	private DistrictMapper districtMapper;
 
-    @Override
-    public List<District> getByParent(String parent) {
-        return null;
-    }
+	@Override
+	public List<District> getListByParent(String parent) {
+		return findListByParent(parent);
+	}
 
-    /**
-     * 根据父级代号获取全国所有省、某省的所有市、某市的所有区
-     * @param parent 父级代号
-     * @return 全国所有省、某省的所有市、某市的所有区的列表
-     */
-    private List<District> findByParent(String parent){
-        return districtMapper.findByParent(parent);
-    }
+	@Override
+	public District getByCode(String code) {
+		return findByCode(code);
+	}
 
+	/**
+	 * 根据父级代号获取所有省/某省的所有市/某市的所有区的列表
+	 *
+	 * @param parent 父级代码，如果获取所有省的列表，则应该使用"86"
+	 * @return 匹配的省/市/区的列表
+	 */
+	private List<District> findListByParent(String parent) {
+		return districtMapper.findListByParent(parent);
+	}
+
+	/**
+	 * 根据省/市/区的代号获取详情
+	 *
+	 * @param code 省/市/区的代号
+	 * @return 匹配的省/市/区的详情，如果没有匹配的数据，则返回null
+	 */
+	private District findByCode(String code) {
+		return districtMapper.findByCode(code);
+	}
 
 }

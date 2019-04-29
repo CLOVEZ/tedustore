@@ -1,40 +1,25 @@
 package cn.tedu.store.entity;
 
+/**
+ * 收货地址数据的实体类
+ */
 public class Address extends BaseEntity {
 
-    private static final long serialVersionUID = -250866843883489000L;
+    private static final long serialVersionUID = 205823991333230728L;
+
     private Integer aid;
     private Integer uid;
-    private String name;
+    private String receiver;
     private String province;
     private String city;
     private String area;
     private String district;
     private String zip;
     private String address;
-    private String tel;
     private String phone;
+    private String tel;
     private String tag;
     private Integer isDefault;
-
-    @Override
-    public String toString() {
-        return "Address{" +
-                "aid=" + aid +
-                ", uid=" + uid +
-                ", name='" + name + '\'' +
-                ", province='" + province + '\'' +
-                ", city='" + city + '\'' +
-                ", area='" + area + '\'' +
-                ", district='" + district + '\'' +
-                ", zip='" + zip + '\'' +
-                ", address='" + address + '\'' +
-                ", tel='" + tel + '\'' +
-                ", phone='" + phone + '\'' +
-                ", tag='" + tag + '\'' +
-                ", isDefault='" + isDefault + '\'' +
-                '}';
-    }
 
     public Integer getAid() {
         return aid;
@@ -52,12 +37,12 @@ public class Address extends BaseEntity {
         this.uid = uid;
     }
 
-    public String getName() {
-        return name;
+    public String getReceiver() {
+        return receiver;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     public String getProvince() {
@@ -108,20 +93,20 @@ public class Address extends BaseEntity {
         this.address = address;
     }
 
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
-
     public String getPhone() {
         return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
     public String getTag() {
@@ -138,5 +123,12 @@ public class Address extends BaseEntity {
 
     public void setIsDefault(Integer isDefault) {
         this.isDefault = isDefault;
+    }
+
+    @Override
+    public String toString() {
+        return "Address [aid=" + aid + ", uid=" + uid + ", receiver=" + receiver + ", province=" + province + ", city="
+                + city + ", area=" + area + ", district=" + district + ", zip=" + zip + ", address=" + address
+                + ", phone=" + phone + ", tel=" + tel + ", tag=" + tag + ", isDefault=" + isDefault + "]";
     }
 }
