@@ -18,7 +18,7 @@ public class DistrictMapperTestCase {
 
     @Test
     public void findListByParent() {
-        String parent = "860";
+        String parent = "86";
         List<District> data = mapper.findListByParent(parent);
         System.err.println("BEGIN:");
         for (District district : data) {
