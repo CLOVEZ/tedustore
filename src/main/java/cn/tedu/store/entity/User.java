@@ -12,9 +12,9 @@ public class User extends BaseEntity {
 	private String password;
 	private String salt;
 	private Integer gender;
+    private String avatar;
 	private String phone;
 	private String email;
-	private String avatar;
 	private Integer isDelete;
 
 	public Integer getUid() {
@@ -57,6 +57,14 @@ public class User extends BaseEntity {
 		this.gender = gender;
 	}
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
 	public String getPhone() {
 		return phone;
 	}
@@ -73,14 +81,6 @@ public class User extends BaseEntity {
 		this.email = email;
 	}
 
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
-	}
-
 	public Integer getIsDelete() {
 		return isDelete;
 	}
@@ -92,7 +92,7 @@ public class User extends BaseEntity {
 	@Override
 	public String toString() {
 		return "User [uid=" + uid + ", username=" + username + ", password=" + password + ", salt=" + salt + ", gender="
-				+ gender + ", phone=" + phone + ", email=" + email + ", avatar=" + avatar + ", isDelete=" + isDelete
+                + gender + ", avatar=" + avatar + ", phone=" + phone + ", email=" + email + ", isDelete=" + isDelete
 				+ "]";
 	}
 

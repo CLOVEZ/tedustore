@@ -3,7 +3,8 @@ package cn.tedu.store.service.ex;
 /**
  * 更新数据异常
  */
-public class UpdateException extends ServiceException {
+public class UpdateException
+        extends ServiceException {
 
 	private static final long serialVersionUID = -3670870874533766508L;
 

@@ -6,10 +6,10 @@ import java.util.Date;
 /**
  * 实体类的基类
  */
-abstract class BaseEntity implements Serializable {
+public abstract class BaseEntity implements Serializable {
 
-	private static final long serialVersionUID = -5882064199939706583L;
-
+    private static final long serialVersionUID = -6185124879935579311L;
+	
 	private String createdUser;
 	private Date createdTime;
 	private String modifiedUser;
@@ -45,12 +45,6 @@ abstract class BaseEntity implements Serializable {
 
 	public void setModifiedTime(Date modifiedTime) {
 		this.modifiedTime = modifiedTime;
-	}
-
-	@Override
-	public String toString() {
-		return "BaseEntity [createdUser=" + createdUser + ", createdTime=" + createdTime + ", modifiedUser="
-				+ modifiedUser + ", modifiedTime=" + modifiedTime + "]";
 	}
 
 }

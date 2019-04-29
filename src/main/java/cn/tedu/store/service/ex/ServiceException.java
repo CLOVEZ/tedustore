@@ -1,7 +1,7 @@
 package cn.tedu.store.service.ex;
 
 /**
- * 业务异常，是当前项目中业务层抛出的异常的基类
+ * 业务异常，当前项目中自定义异常类的基类
  */
 public class ServiceException extends RuntimeException {
 

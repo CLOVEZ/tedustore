@@ -1,10 +1,11 @@
 package cn.tedu.store.controller;
 
+import cn.tedu.store.controller.ex.FileContentTypeException;
+import cn.tedu.store.controller.ex.FileEmptyException;
+import cn.tedu.store.controller.ex.FileSizeException;
+import cn.tedu.store.controller.ex.FileUploadIOException;
 import cn.tedu.store.entity.User;
 import cn.tedu.store.service.IUserService;
-import cn.tedu.store.service.ex.FileEmptyException;
-import cn.tedu.store.service.ex.FileSizeException;
-import cn.tedu.store.service.ex.FileTypeException;
 import cn.tedu.store.util.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,147 +22,158 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 处理用户数据请求的控制器类
+ */
 @RestController
-@RequestMapping("/users")
-public class UserController extends BaseController {
+@RequestMapping("users")
+public class UserController
+		extends BaseController {
+
 	@Autowired
 	private IUserService userService;
-	
-	@RequestMapping("/reg")
-	public ResponseResult<Void> reg(User user) {
-		userService.reg(user);
-		return new ResponseResult<>(SUCCESS);
-	}
-	
-	@RequestMapping("/login")
-	public ResponseResult<User> login(
-		@RequestParam("username") String username,
-		@RequestParam("password") String password,
-		HttpSession session) {
-		// 执行登录验证
-		User data = userService.login(username, password);
-		// 向Session中封装用户信息
-		session.setAttribute("uid", data.getUid());
-		session.setAttribute("username", data.getUsername());
-		// 返回
-		return new ResponseResult<>(SUCCESS, data);
-	}
-	
-	@RequestMapping("/change_password")
-	public ResponseResult<Void> changePassword(
-		@RequestParam("old_password") String oldPassword,
-		@RequestParam("new_password") String newPassword,
-		HttpSession session) {
-		// 从session中获取uid和username
-		Integer uid = getUidFromSession(session);
-		String username = session.getAttribute("username").toString();
-		// 执行修改密码：service.changePassword(uid,username,oldPassword,newPassword)
-		userService.changePassword(uid, username, oldPassword, newPassword);
-		// 返回结果
-		return new ResponseResult<>(SUCCESS);
-	}
-
-	@RequestMapping("change_info")
-	public ResponseResult<Void> changeInfo(User user , HttpSession session){
-		Integer uid = getUidFromSession(session);
-		String username = session.getAttribute("username").toString();
-		user.setUid(uid);
-		user.setModifiedUser(username);
-		//调用业务层对象执行修改个人资料
-		userService.changeInfo(user);
-		return new ResponseResult<>(SUCCESS);
-
-	}
-
-	@RequestMapping("details")
-	public  ResponseResult<User> getByUid(HttpSession session){
-		Integer uid = getUidFromSession(session);
-		User user =  userService.getByUid(uid);
-		return new ResponseResult<>(SUCCESS,user);
-	}
 
 	/**
-	 * 上传头像的文件夹名称
+	 * 存储上传的文件的文件夹名称
 	 */
 	public static final String UPLOAD_DIR = "upload";
 
 	/**
-	 * 上传头像的最大大小
+	 * 上传文件时允许上传的最大大小
 	 */
-	public static final long UPLOAD_AVATAR_MAX_SIZE = 1*1024*1024;
-	/**
-	 * 上传头像的文件类型
-	 */
-	public static final List<String> UPLOAD_AVATAR_TYPES =new ArrayList<>();
+	public static final long UPLOAD_MAX_SIZE
+			= 1 * 1024 * 1024;
 
+	/**
+	 * 允许上传的文件类型的集合
+	 */
+	public static final List<String> UPLOAD_CONTENT_TYPES
+			= new ArrayList<String>();
+
+	/**
+	 * 添加允许上传的文件类型
+	 */
 	static {
-		UPLOAD_AVATAR_TYPES.add("image/jpeg");
-		UPLOAD_AVATAR_TYPES.add("image/png");
+		UPLOAD_CONTENT_TYPES.add("image/jpeg");
+		UPLOAD_CONTENT_TYPES.add("image/png");
+		UPLOAD_CONTENT_TYPES.add("image/gif");
+		UPLOAD_CONTENT_TYPES.add("image/bmp");
+	}
+
+	@PostMapping("reg")
+	public ResponseResult<Void>
+	handleReg(User user) {
+		userService.reg(user);
+		return new ResponseResult<Void>(SUCCESS);
+	}
+
+	@PostMapping("login")
+	public ResponseResult<User> handleLogin(
+			@RequestParam("username") String username,
+			@RequestParam("password") String password,
+			HttpSession session) {
+		User user = userService.login(username, password);
+		session.setAttribute("uid", user.getUid());
+		session.setAttribute("username", user.getUsername());
+		return new ResponseResult<User>(SUCCESS, user);
+	}
+
+	@PostMapping("change_password")
+	public ResponseResult<Void> changePassword(
+			@RequestParam("old_password") String oldPassword,
+			@RequestParam("new_password") String newPassword,
+			HttpSession session) {
+		Integer uid = getUidFromSession(session);
+		userService.changePassword(
+				uid, oldPassword, newPassword);
+		return new ResponseResult<Void>(SUCCESS);
+	}
+
+	@PostMapping("change_info")
+	public ResponseResult<Void> changeInfo(
+			User user, HttpSession session) {
+		Integer uid = getUidFromSession(session);
+		user.setUid(uid);
+		userService.changeInfo(user);
+		return new ResponseResult<Void>(SUCCESS);
 	}
 
 	@PostMapping("change_avatar")
 	public ResponseResult<String> changeAvatar(
 			HttpServletRequest request,
-			@RequestParam("avatar")MultipartFile avatar,
-			HttpSession session){
-		if(avatar.isEmpty()){
-			throw new FileEmptyException("上传头像失败，未选择头像文件，或选择的文件为空");
+			@RequestParam("avatar") MultipartFile avatar) {
+		// 判断上传的文件是否为空：avatar.isEmpty()
+		if (avatar.isEmpty()) {
+			// 是：抛出异常：FileEmptyException
+			throw new FileEmptyException(
+					"上传文件失败！没有选择文件，或上传的文件为空！");
 		}
-		//检查文件大小是否超标
-		long size = avatar.getSize();
-		if(size>UPLOAD_AVATAR_MAX_SIZE){
-			throw new FileSizeException("上传头像失败！不允许使用超过" + UPLOAD_AVATAR_MAX_SIZE / 1024 + "KB的文件！");
-		}
-		// 检查文件类型是否在允许的范围之内
+
+		// 判断文件类型是否不在允许的范围内：avatar.getContentType() / list.contains(contentType)
 		String contentType = avatar.getContentType();
-		if (!UPLOAD_AVATAR_TYPES.contains(contentType)) {
-			// 抛出异常：FileTypeException
-			throw new FileTypeException(
-					"上传头像失败！不支持所提交的文件类型！允许的文件类型有：" + UPLOAD_AVATAR_TYPES);
+		if (!UPLOAD_CONTENT_TYPES.contains(contentType)) {
+			// 是：抛出异常：FileContentTypeException
+			throw new FileContentTypeException(
+					"上传文件失败！不支持上传" + contentType + "类型的文件！");
 		}
-		//确定保存文件的文件夹的File对象
+
+		// 判断文件大小是否超出了限制：avatar.getSize()
+		long size = avatar.getSize();
+		if (size > UPLOAD_MAX_SIZE) {
+			// 是：抛出异常：FileSizeException
+			throw new FileSizeException(
+					"上传文件失败！尝试上传的文件大小超出了限制！仅允许上传不超过" + UPLOAD_MAX_SIZE / 1024 / 1024 + "M的文件！");
+		}
+
+		// 确定上传的文件夹
 		String parentPath = request.getServletContext().getRealPath(UPLOAD_DIR);
-		File parent =  new File(parentPath);
-		if(!parent.exists()){
+		File parent = new File(parentPath);
+		if (!parent.exists()) {
 			parent.mkdirs();
 		}
-		//确定保存的文件的文件名
-		String originalFilename =  avatar.getOriginalFilename();
+
+		// 确定上传的文件名
+		String orginalFilename = avatar.getOriginalFilename();
 		String suffix = "";
-		int beginIndex = originalFilename.lastIndexOf(".");
-		if(beginIndex!=-1){
-			suffix =  originalFilename.substring(beginIndex);
+		int beginIndex = orginalFilename.lastIndexOf(".");
+		if (beginIndex != -1) {
+			suffix = orginalFilename.substring(beginIndex);
 		}
-		String child = UUID.randomUUID().toString()+suffix;
-		//创建保存文件的File对象：dest = new File(parent,chile);
-		File dest = new File(parent,child);
+		String filename = UUID.randomUUID() + suffix;
+
+		// 执行存储
+		File dest = new File(parent, filename);
 		try {
-			//执行上传并保存头像文件：avatar.transferTo(dest);
 			avatar.transferTo(dest);
 		} catch (IOException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
+			throw new FileUploadIOException(
+					"上传文件失败！出现读写错误，请联系系统管理员，或稍后再次尝试！");
 		}
-		//执行修改头像
-		//从Session中获取uid和username
-		Integer uid = getUidFromSession(session);
-		String username = session.getAttribute("username").toString();
-		//执行修改数据：service.changeAvatar(uid,avatarPath,username)
-		String avatarPath = UPLOAD_DIR +"/"+child;
-		userService.changeAvatar(uid,avatarPath,username);
-		//返回成功及avatarPath
-		ResponseResult<String> rr = new ResponseResult<>();
+
+		// 将上传的文件路径存储到数据库：service.changeAvatar(uid, avatar)
+		Integer uid
+				= getUidFromSession(request.getSession());
+		String avatarUrl
+				= "/" + UPLOAD_DIR + "/" + filename;
+		userService.changeAvatar(uid, avatarUrl);
+
+		// 返回
+		ResponseResult<String> rr
+				= new ResponseResult<String>();
 		rr.setState(SUCCESS);
-		rr.setData(avatarPath);
+		rr.setData(avatarUrl);
 		return rr;
 	}
 
+	@RequestMapping("get_info")
+	public ResponseResult<User> getInfo(HttpSession session) {
+		Integer uid = getUidFromSession(session);
+		User user = userService.getByUid(uid);
+		return new ResponseResult<User>(SUCCESS, user);
+	}
 
-
-
-
-	
 }
-
 
 
 

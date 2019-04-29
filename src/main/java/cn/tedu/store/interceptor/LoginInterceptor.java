@@ -6,15 +6,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- * 登录拦截器
- */
-public class LoginInterceptor implements HandlerInterceptor {
+public class LoginInterceptor
+		implements HandlerInterceptor {
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+	public boolean preHandle(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			Object handler)
 			throws Exception {
-		HttpSession session = request.getSession();
+		HttpSession session
+				= request.getSession();
 		if (session.getAttribute("uid") == null) {
 			response.sendRedirect("/web/login.html");
 			return false;

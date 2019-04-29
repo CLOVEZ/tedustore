@@ -6,27 +6,28 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.unit.DataSize;
 
 import javax.servlet.MultipartConfigElement;
 
+@Configuration
 @SpringBootApplication
 @MapperScan("cn.tedu.store.mapper")
-@Configuration
 public class StoreApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(StoreApplication.class, args);
-	}
-	@Bean
-	public MultipartConfigElement getMultipartConfig(){
-		MultipartConfigFactory factory = new MultipartConfigFactory();
+    public static void main(String[] args) {
+        SpringApplication.run(StoreApplication.class, args);
+    }
 
-		DataSize maxSize = DataSize.ofMegabytes(100L);
-		factory.setMaxFileSize(maxSize);
-		factory.setMaxRequestSize(maxSize);
-		MultipartConfigElement element = factory.createMultipartConfig();
-		return element;
-	}
+    @Bean
+    @SuppressWarnings("deprecation")
+    public MultipartConfigElement
+    multipartConfiguration() {
+        MultipartConfigFactory factory
+                = new MultipartConfigFactory();
+        factory.setMaxRequestSize(50 * 1024 * 1024);
+        factory.setMaxFileSize(50 * 1024 * 1024);
+        return factory.createMultipartConfig();
+    }
 
 }
+
