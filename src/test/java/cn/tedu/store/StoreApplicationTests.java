@@ -10,7 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class StoreApplicationTests {
 
 	@Test
-	public void contextLoads() throws Exception {
+	public void contextLoads() {
 	}
 
 }
+

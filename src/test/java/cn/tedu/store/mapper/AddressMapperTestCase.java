@@ -1,6 +1,5 @@
 package cn.tedu.store.mapper;
 
-
 import cn.tedu.store.entity.Address;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,24 +11,32 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class AddressMapperTestCase {
 
-    @Autowired
-    AddressMapper mapper;
+	@Autowired
+	private AddressMapper mapper;
 
-    @Test
-    public void insert(){
-        Address address = new Address();
-        address.setUid(8);
-        address.setName("hello");
-        address.setZip("000000");
-        Integer rows = mapper.insert(address);
-        System.err.println(rows);
-    }
-    @Test
-    public void countByUid(){
-        Integer uid = 8 ;
-        Integer count = mapper.countByUid(uid);
-        System.err.println("count:"+count);
-    }
+	@Test
+	public void insert() {
+		Address address = new Address();
+		address.setUid(3);
+		address.setReceiver("小张同学");
+		Integer rows = mapper.insert(address);
+		System.err.println("rows=" + rows);
+	}
 
+	@Test
+	public void getCountByUid() {
+		Integer uid = 3;
+		Integer count = mapper.getCountByUid(uid);
+		System.err.println("count=" + count);
+	}
 
 }
+
+
+
+
+
+
+
+
+

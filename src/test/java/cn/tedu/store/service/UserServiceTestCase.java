@@ -7,84 +7,91 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.DigestUtils;
-
-import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserServiceTestCase {
 
-	@Autowired
-	public IUserService service;
+    @Autowired
+    private IUserService service;
 	
 	@Test
 	public void reg() {
 		try {
 			User user = new User();
-			user.setUsername("chenxt");
-			user.setPassword("1234");
+            user.setUsername("ChengHeng");
+            user.setPassword("8888");
+            user.setPhone("13800138007");
+            user.setEmail("chengheng@tedu.cn");
 			user.setGender(1);
-			user.setPhone("13800138008");
-			user.setEmail("upper@tedu.cn");
-			user.setAvatar("http://www.tedu.cn/upper.png");
+            user.setAvatar("http://www.tedu.cn/logo.png");
 			service.reg(user);
-			System.err.println("OK");
+            System.err.println("OK.");
+        } catch (ServiceException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void login() {
+        try {
+            String username = "rest";
+            String password = "1234";
+            User user = service.login(username, password);
+            System.err.println(user);
 		} catch (ServiceException e) {
-			System.err.println(e.getClass().getName());
 			System.err.println(e.getMessage());
 		}
 	}
-	
-
 	
 	@Test
 	public void changePassword() {
 		try {
-			Integer uid = 1;
-			String username = "超级管理员";
-			String oldPassword = "1234";
-			String newPassword = "8888";
-			service.changePassword(uid, username, oldPassword, newPassword);;
+            Integer uid = 6;
+            String oldPassword = "8888";
+            String newPassword = "1234";
+            service.changePassword(uid, oldPassword, newPassword);
 			System.err.println("OK.");
 		} catch (ServiceException e) {
-			System.err.println(e.getClass().getName());
 			System.err.println(e.getMessage());
 		}
 	}
 
-
-	@Test
-	public void login() {
+    @Test
+    public void changeInfo() {
 		try {
-			String username = "root";
-			String password = "1234";
-			User data = service.login(username, password);
-			System.err.println(data);
+            User user = new User();
+            user.setUid(50);
+            user.setGender(0);
+            user.setPhone("88888888");
+            user.setEmail("tedu@qq.com");
+            service.changeInfo(user);
+            System.err.println("OK.");
 		} catch (ServiceException e) {
-			System.err.println(e.getClass().getName());
 			System.err.println(e.getMessage());
 		}
 	}
 	
 	@Test
-	public void messageDigest() {
-		String password = "123456";
-		String salt = UUID.randomUUID().toString();
-		String result = DigestUtils
-				.md5DigestAsHex((salt + password + salt).getBytes());
-		System.err.println(result);
-	}
-
-	@Test
-    public void syso(){
-        System.out.println("hello");
+    public void changeAvatar() {
+        try {
+            Integer uid = 6;
+            String avatar = "123456";
+            service.changeAvatar(uid, avatar);
+            System.err.println("OK.");
+        } catch (ServiceException e) {
+            System.err.println(e.getMessage());
+        }
     }
-
+	
+	@Test
+    public void getByUid() {
+        Integer uid = 5;
+        User user = service.getByUid(uid);
+        System.err.println(user);
+    }
 	
 }
-
-
 
 
 
