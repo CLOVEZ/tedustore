@@ -32,6 +32,7 @@ public class UserController extends BaseController {
 	
 	@Autowired
 	private IUserService userService;
+
 	
 	@RequestMapping("reg")
 	public ResponseResult<Void> reg(User user) {
@@ -45,7 +46,6 @@ public class UserController extends BaseController {
 	public ResponseResult<User> login(
 			String username, String password, 
 			HttpSession session) {
-		
 		// 检查用户名与密码的格式
 		
 		// 调用业务层对象的login()方法执行登录

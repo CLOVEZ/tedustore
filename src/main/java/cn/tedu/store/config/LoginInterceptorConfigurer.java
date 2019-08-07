@@ -1,4 +1,4 @@
-package cn.tedu.store.conf;
+package cn.tedu.store.config;
 
 import java.util.ArrayList;
 import java.util.List;

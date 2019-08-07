@@ -66,7 +66,6 @@ public class UserServiceImpl
 	public User login(String username, String password) throws UserNotFoundException, PasswordNotMatchException {
 		// 根据参数username查询匹配的用户信息
 		User result = userMapper.findByUsername(username);
-		
 	    // 判断查询结果是否为null
 		if (result == null) {
 			// 是：用户名对应的数据不存在，抛出UserNotFoundException
