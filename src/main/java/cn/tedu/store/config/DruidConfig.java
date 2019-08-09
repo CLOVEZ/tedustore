@@ -60,7 +60,7 @@ public class DruidConfig {
         ServletRegistrationBean<Servlet> servletServletRegistrationBean = new
                 ServletRegistrationBean<>(new StatViewServlet(),"/druid/*");
         //白名单
-        servletServletRegistrationBean.addInitParameter("allow","0.0.0.0,61.164.136.66");
+        servletServletRegistrationBean.addInitParameter("allow","0.0.0.0");
 
         servletServletRegistrationBean.addInitParameter("loginUsername","admin");
 
