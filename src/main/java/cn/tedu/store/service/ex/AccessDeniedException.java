@@ -1,11 +1,11 @@
 package cn.tedu.store.service.ex;
 
 /**
- * 非法访问异常
+ * 拒绝访问，例如权限不足，或数据归属有误
  */
 public class AccessDeniedException extends ServiceException {
 
-	private static final long serialVersionUID = 2187156790961238675L;
+	private static final long serialVersionUID = 3849396365637118465L;
 
 	public AccessDeniedException() {
 		super();

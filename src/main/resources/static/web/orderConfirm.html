@@ -21,7 +21,6 @@
 		<link rel="stylesheet" type="text/css" href="../css/footer.css" />
 		<link rel="stylesheet" type="text/css" href="../css/orderConfirm.css" />
 		<link rel="stylesheet" type="text/css" href="../css/cart.css" />
-		<script src="../js/orderConfirm.js" type="text/javascript" charset="utf-8"></script>
 	</head>
 
 	<body>
@@ -110,12 +109,12 @@
 					</div>
 				</div>
 				<div class="col-md-12">
-					<form role="form">
+					<form role="form" method="post" action="../orders/create">
 						<div class="form-group">
 							<label for="name">
 								<p>选择收货地址：</p>
 							</label>
-							<select class="form-control">
+							<select name="aid" id="address-list" class="form-control">
 								<option>八戒&nbsp;&nbsp;&nbsp;家&nbsp;&nbsp;&nbsp;北京市房山区高老庄3排6号&nbsp;&nbsp;&nbsp;1380***1234</option>
 								<option>八戒&nbsp;&nbsp;&nbsp;公司&nbsp;&nbsp;&nbsp;北京市海淀区中关村中路1号1001室&nbsp;&nbsp;&nbsp;1380***1234</option>
 								<option>八戒&nbsp;&nbsp;&nbsp;宿舍&nbsp;&nbsp;&nbsp;北京市海淀区永丰镇30号&nbsp;&nbsp;&nbsp;1380***1234</option>
@@ -136,30 +135,22 @@
 											<th width="20%">金额</th>
 										</tr>
 									</thead>
-									<tbody class="cart-body">
-										<tr>
-											<td><img src="../images/portal/12DELLXPS13-silvery/collect.png" class="img-responsive" /></td>
-											<td>联想(Lenovo)小新Air13 Pro 13.3英寸14.8mm超轻薄笔记本电脑</td>
-											<td>¥<span>5298</span></td>
-											<td>
-												1
-											</td>
-											<td><span>5298</span></td>
-										</tr>
+									<tbody id="cart-list" class="cart-body">
+										
 									</tbody>
 								</table>
 								<div class="total-bar">
 									&nbsp;
 									<span class="pull-right">已选商品
-								<span id="selectCount">1</span>件 总价¥
-									<span id="selectTotal">5298</span>元
+									<span id="all-num">1</span>件 总价¥
+									<span id="all-price">5298</span>元
 									</span>
 								</div>
 							</div>
 						</div>
 						<div class="pay-bar">
 							<a href="cart.html">返回购物车</a>
-							<span class="pull-right"><input type="button" value="在线支付" class="btn btn-primary btn-lg link-pay"/></span>
+							<span class="pull-right"><input type="submit" value="在线支付" class="btn btn-primary btn-lg link-pay"/></span>
 						</div>
 					</form>
 				</div>
@@ -251,6 +242,87 @@
 
 		</footer>
 		<!--页脚结束-->
+	<script type="text/javascript">
+	$(document).ready(function() {
+		showAddressList();
+		
+		showCartList();
+	});
+	
+	function showCartList() {
+		$("#cart-list").empty();
+		
+		$.ajax({
+			"url":"/carts/get_by_cids",
+			"data":window.location.search.substr(1),
+			"type":"get",
+			"dataType":"json",
+			"success":function(obj) {
+				var list = obj.data;
+				console.log("count=" + list.length);
+				
+				var allNum = 0;
+				var allPrice = 0;
+				
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].title);
+					
+					allNum += list[i].num;
+					allPrice += list[i].realPrice * list[i].num;
+					
+					var html = '<tr>'
+						+ '<td><img src="..#{image}collect.png" class="img-responsive" /></td>'
+						+ '<td><input type="hidden" name="cids" value="#{cid}" />#{title}</td>'
+						+ '<td>¥<span>#{realPrice}</span></td>'
+						+ '<td>#{num}</td>'
+						+ '<td>¥<span>#{totalPrice}</span></td>'
+						+ '</tr>';
+						
+					html = html.replace(/#{cid}/g, list[i].cid);
+					html = html.replace(/#{image}/g, list[i].image);
+					html = html.replace(/#{title}/g, list[i].title);
+					html = html.replace(/#{realPrice}/g, list[i].realPrice);
+					html = html.replace(/#{num}/g, list[i].num);
+					html = html.replace(/#{totalPrice}/g, list[i].realPrice * list[i].num);
+	
+					$("#cart-list").append(html);
+				}
+				
+				$("#all-num").html(allNum);
+				$("#all-price").html(allPrice);
+			}
+		});
+	}
+	
+	function showAddressList() {
+		$("#address-list").empty();
+		
+		$.ajax({
+			"url":"/addresses/",
+			"type":"get",
+			"dataType":"json",
+			"success":function(obj) {
+				var list = obj.data;
+				console.log("count=" + list.length);
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].name);
+					var html = '<option value="#{aid}">[#{tag}] #{name} / #{phone} / #{provinceName}#{cityName}#{areaName}#{address}</option>';
+						
+					html = html.replace(/#{aid}/g, list[i].aid);
+					html = html.replace(/#{tag}/g, list[i].tag);
+					html = html.replace(/#{name}/g, list[i].name);
+					html = html.replace(/#{provinceName}/g, list[i].provinceName);
+					html = html.replace(/#{cityName}/g, list[i].cityName);
+					html = html.replace(/#{areaName}/g, list[i].areaName);
+					html = html.replace(/#{address}/g, list[i].address);
+					html = html.replace(/#{phone}/g, list[i].phone);
+						
+					$("#address-list").append(html);
+				}
+			}
+		});
+	}
+	</script>
 	</body>
 
 </html>

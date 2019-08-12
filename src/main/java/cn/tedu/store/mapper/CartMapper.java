@@ -14,53 +14,69 @@ import cn.tedu.store.vo.CartVO;
 public interface CartMapper {
 
 	/**
-	 * 增加新的购物车数据
+	 * 插入购物车数据
 	 * @param cart 购物车数据
 	 * @return 受影响的行数
 	 */
-	Integer addnew(Cart cart);
+	Integer insert(Cart cart);
 
 	/**
-	 * 更新购物车中商品的数量
+	 * 根据购物车数据id删除数据
+	 * @param cid 购物车数据id
+	 * @return 受影响的行数
+	 */
+	Integer deleteByCid(Integer cid);
+	
+	/**
+	 * 根据若干个购物车数据id删除数据
+	 * @param cids 若干个购物车数据id
+	 * @return 受影响的行数
+	 */
+	Integer deleteByCids(Integer[] cids);
+	
+	/**
+	 * 修改商品在购物车中的数量
 	 * @param cid 购物车数据的id
-	 * @param num 商品的新数量
-	 * @param modifiedUser 修改执行人
-	 * @param modifiedTime 修改时间
+	 * @param num 新的数量
+	 * @param username 操作执行人
+	 * @param modifiedTime 操作执行时间
 	 * @return 受影响的行数
 	 */
 	Integer updateNum(
 		@Param("cid") Integer cid, 
-		@Param("num") Integer num, 
-		@Param("modifiedUser") String modifiedUser, 
+		@Param("num") Integer num,
+		@Param("username") String username, 
 		@Param("modifiedTime") Date modifiedTime);
 
 	/**
-	 * 根据用户id和商品id查询购物车数据
-	 * @param uid 用户id
-	 * @param gid 商品id
-	 * @return 匹配的购物车数据，如果没有匹配的数据，则返回null
+	 * 根据购物车数据id查询购物车数据详情
+	 * @param cid 购物车数据id
+	 * @return 匹配的购物车数据详情，如果没有匹配的数据，则返回null
 	 */
-	Cart findByUidAndGid(
-		@Param("uid") Integer uid, 
-		@Param("gid") Long gid);
+	Cart findByCid(Integer cid);
 	
 	/**
-	 * 获取某用户的购物车数据列表
-	 * @param uid 用户的id
-	 * @return 匹配的购物车数据列表
+	 * 根据用户id和商品id查询购物车数据
+	 * @param uid 用户id
+	 * @param pid 商品id
+	 * @return 匹配的购物车数据，如果没有匹配的数据，则返回null
+	 */
+	Cart findByUidAndPid(
+		@Param("uid") Integer uid, 
+		@Param("pid") Integer pid);
+	
+	/**
+	 * 根据用户id查询该用户的购物车列表
+	 * @param uid 用户id
+	 * @return 该用户的购物车列表，如果该用户购物车为空，则返回空集合
 	 */
 	List<CartVO> findByUid(Integer uid);
 	
 	/**
-	 * 根据购物车数据的id查询购物车数据
-	 * @param cid 购物车数据的id
-	 * @return 匹配的购物车数据，如果没有匹配的数据，则返回null
+	 * 根据购物车数据的若干个id值获取匹配的购物车数据的详情
+	 * @param cids 若干个购物车数据的id
+	 * @return 匹配的购物车数据的详情
 	 */
-	Cart findByCid(Integer cid);
+	List<CartVO> findByCids(Integer[] cids);
 	
 }
-
-
-
-
-

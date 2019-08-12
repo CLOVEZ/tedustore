@@ -1,7 +1,7 @@
 package cn.tedu.store.service.ex;
 
 /**
- * 尝试访问的用户数据不存在
+ * 用户数据不存在
  */
 public class UserNotFoundException extends ServiceException {
 

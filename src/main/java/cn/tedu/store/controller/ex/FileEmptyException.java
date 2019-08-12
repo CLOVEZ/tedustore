@@ -1,11 +1,11 @@
 package cn.tedu.store.controller.ex;
 
 /**
- * 文件为空的异常，通常是上传文件时，没有选择文件就提交了请求，或者选择的文件是0字节的。
+ * 上传的文件为空的异常，可能是没有选择文件，或选择的文件是0字节
  */
 public class FileEmptyException extends FileUploadException {
 
-	private static final long serialVersionUID = 1241017634099485103L;
+	private static final long serialVersionUID = 5216328143694529891L;
 
 	public FileEmptyException() {
 		super();

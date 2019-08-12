@@ -1,7 +1,7 @@
 package cn.tedu.store.service.ex;
 
 /**
- * 收货地址数据不存在的异常
+ * 收货地址数据不存在
  */
 public class AddressNotFoundException extends ServiceException {
 

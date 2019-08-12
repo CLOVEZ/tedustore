@@ -1,7 +1,7 @@
 package cn.tedu.store.service.ex;
 
 /**
- * 验证密码失败，密码错误
+ * 密码错误异常
  */
 public class PasswordNotMatchException extends ServiceException {
 

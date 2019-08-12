@@ -5,19 +5,21 @@ package cn.tedu.store.entity;
  */
 public class Address extends BaseEntity {
 
-	private static final long serialVersionUID = 8491523504331195543L;
+	private static final long serialVersionUID = 6946915401608396201L;
 
 	private Integer aid;
 	private Integer uid;
 	private String name;
-	private String province;
-	private String city;
-	private String area;
-	private String district;
+	private String provinceCode;
+	private String provinceName;
+	private String cityCode;
+	private String cityName;
+	private String areaCode;
+	private String areaName;
 	private String zip;
 	private String address;
-	private String tel;
 	private String phone;
+	private String tel;
 	private String tag;
 	private Integer isDefault;
 
@@ -45,36 +47,52 @@ public class Address extends BaseEntity {
 		this.name = name;
 	}
 
-	public String getProvince() {
-		return province;
+	public String getProvinceCode() {
+		return provinceCode;
 	}
 
-	public void setProvince(String province) {
-		this.province = province;
+	public void setProvinceCode(String provinceCode) {
+		this.provinceCode = provinceCode;
 	}
 
-	public String getCity() {
-		return city;
+	public String getProvinceName() {
+		return provinceName;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
 	}
 
-	public String getArea() {
-		return area;
+	public String getCityCode() {
+		return cityCode;
 	}
 
-	public void setArea(String area) {
-		this.area = area;
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
 	}
 
-	public String getDistrict() {
-		return district;
+	public String getCityName() {
+		return cityName;
 	}
 
-	public void setDistrict(String district) {
-		this.district = district;
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
 	}
 
 	public String getZip() {
@@ -93,20 +111,20 @@ public class Address extends BaseEntity {
 		this.address = address;
 	}
 
-	public String getTel() {
-		return tel;
-	}
-
-	public void setTel(String tel) {
-		this.tel = tel;
-	}
-
 	public String getPhone() {
 		return phone;
 	}
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getTel() {
+		return tel;
+	}
+
+	public void setTel(String tel) {
+		this.tel = tel;
 	}
 
 	public String getTag() {
@@ -126,9 +144,36 @@ public class Address extends BaseEntity {
 	}
 
 	@Override
-	public String toString() {
-		return "Address [aid=" + aid + ", uid=" + uid + ", name=" + name + ", province=" + province + ", city=" + city
-				+ ", area=" + area + ", district=" + district + ", zip=" + zip + ", address=" + address + ", tel=" + tel
-				+ ", phone=" + phone + ", tag=" + tag + ", isDefault=" + isDefault + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((aid == null) ? 0 : aid.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Address other = (Address) obj;
+		if (aid == null) {
+			if (other.aid != null)
+				return false;
+		} else if (!aid.equals(other.aid))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Address [aid=" + aid + ", uid=" + uid + ", name=" + name + ", provinceCode=" + provinceCode
+				+ ", provinceName=" + provinceName + ", cityCode=" + cityCode + ", cityName=" + cityName + ", areaCode="
+				+ areaCode + ", areaName=" + areaName + ", zip=" + zip + ", address=" + address + ", phone=" + phone
+				+ ", tel=" + tel + ", tag=" + tag + ", isDefault=" + isDefault + "]";
+	}
+
 }

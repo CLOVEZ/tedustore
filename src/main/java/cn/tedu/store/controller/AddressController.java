@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.tedu.store.entity.Address;
 import cn.tedu.store.service.IAddressService;
-import cn.tedu.store.util.ResponseResult;
+import cn.tedu.store.util.JsonResult;
 
 /**
  * 处理收货地址相关请求的控制器类
@@ -24,57 +24,53 @@ public class AddressController extends BaseController {
 	@Autowired
 	private IAddressService addressService;
 	
-	@RequestMapping("addnew")
-	public ResponseResult<Void> addnew(Address address, HttpSession session) {
-		// 获取uid
+	@RequestMapping("create")
+	public JsonResult<Void> create(Address address, HttpSession session) {
+		// 从Session中获取uid和username
 		Integer uid = getUidFromSession(session);
-		// 将uid封装到参数address中
-		address.setUid(uid);
-		// 获取用户名
-		String username = session.getAttribute("username").toString();
-		// 执行增加
-		addressService.addnew(address, username);
+		String username = getUsernameFromSession(session);
+		// 调用业务层对象执行新增收货地址
+		addressService.create(uid, username, address);
 		// 返回成功
-		return new ResponseResult<>(SUCCESS);
+		return new JsonResult<>(SUCCESS);
 	}
 	
 	@GetMapping("/")
-	public ResponseResult<List<Address>> getByUid(
-		HttpSession session) {
-		// 获取uid
+	public JsonResult<List<Address>> 
+		getByUid(HttpSession session) {
+		// 从Session中获取uid
 		Integer uid = getUidFromSession(session);
-		// 调用业务层对象执行查询，并获取结果
+		// 执行查询
 		List<Address> data = addressService.getByUid(uid);
-		// 返回成功+结果
-		return new ResponseResult<>(SUCCESS, data);
+		// 返回
+		return new JsonResult<>(SUCCESS, data);
 	}
 	
-	@RequestMapping("/{aid}/set_default")
-	public ResponseResult<Void> setDefault(
-		@PathVariable("aid") Integer aid,
+	@RequestMapping("{aid}/set_default")
+	public JsonResult<Void> setDefault(
+		@PathVariable("aid") Integer aid, 
 		HttpSession session) {
-		// 获取uid和username
+		// 从Session中获取uid和username
 		Integer uid = getUidFromSession(session);
-		String username = session.getAttribute("username").toString();
-		// 执行
+		String username = getUsernameFromSession(session);
+		// 调用业务层对象执行设置默认
 		addressService.setDefault(aid, uid, username);
 		// 返回
-		return new ResponseResult<>(SUCCESS);
+		return new JsonResult<>(SUCCESS);
 	}
 	
-	@RequestMapping("/{aid}/delete")
-	public ResponseResult<Void> delete(
-		@PathVariable("aid") Integer aid,
+	@RequestMapping("{aid}/delete")
+	public JsonResult<Void> delete(
+		@PathVariable("aid") Integer aid, 
 		HttpSession session) {
-		// 获取uid和username
+		// 从Session中获取uid和username
 		Integer uid = getUidFromSession(session);
-		String username = session.getAttribute("username").toString();
-		// 执行
+		String username = getUsernameFromSession(session);
+		// 调用业务层对象执行删除
 		addressService.delete(aid, uid, username);
 		// 返回
-		return new ResponseResult<>(SUCCESS);
+		return new JsonResult<>(SUCCESS);
 	}
-	
 }
 
 

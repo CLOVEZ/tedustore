@@ -145,11 +145,11 @@
 			"data":$("#form-reg").serialize(),
 			"type":"post",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
+			"success":function(obj) {
+				if (obj.state == 2000) {
 					alert("注册成功！");
 				} else {
-					alert(json.message);
+					alert(obj.message);
 				}
 			}
 		});

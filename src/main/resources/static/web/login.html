@@ -150,14 +150,14 @@
 			"data":$("#form-login").serialize(),
 			"type":"post",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
+			"success":function(obj) {
+				if (obj.state == 2000) {
 					alert("登录成功！");
-					// 将用户名和头像保存到Cookie中
-					$.cookie("username", json.data.username, {expire: 7});
-					$.cookie("avatar", json.data.avatar, {expire: 7});
+					// 将头像存到Cookie
+					$.cookie("avatar", obj.data.avatar, {"expires":7});
+					console.log("avatar=" + $.cookie("avatar"));
 				} else {
-					alert(json.message);
+					alert(obj.message);
 				}
 			}
 		});

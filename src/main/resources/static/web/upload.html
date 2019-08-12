@@ -140,12 +140,12 @@
 						<form id="form-change-avatar" class="form-horizontal" role="form">
 							<div class="form-group">
 								<label class="col-md-2 control-label">选择头像:</label>
-								<div class="col-md-1">
+								<div class="col-md-5">
 									<img id="img-avatar" src="../images/index/user.jpg" class="img-responsive" />
 								</div>
 								<div class="clearfix"></div>
 								<div class="col-md-offset-2 col-md-4">
-									<input type="file" name="avatar">
+									<input type="file" name="file">
 								</div>
 							</div>
 							<div class="form-group">
@@ -245,11 +245,8 @@
 		<!--页脚结束-->
 	<script src="../bootstrap3/js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-	$(document).ready(function() {
-		if ($.cookie("avatar") != null) {
-			$("#img-avatar").attr("src", $.cookie("avatar"));
-		}
-	});
+	var avatar = $.cookie("avatar");
+	$("#img-avatar").attr("src", avatar);
 	
 	$("#btn-change-avatar").click(function(){
 		$.ajax({
@@ -259,18 +256,18 @@
 			"processData":false,
 			"type":"post",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					alert("上传头像成功！");
-					$("#img-avatar").attr("src", json.data);
-					$.cookie("avatar", json.data, {expire: 7});
+			"success":function(obj) {
+				if (obj.state == 2000) {
+					alert("上传成功！");
+					$("#img-avatar").attr("src", obj.data);
+					$.cookie("avatar", obj.data, {"expires":7});
 				} else {
-					alert(json.message);
+					alert(obj.message);
 				}
 			},
 			"error":function() {
 				alert("您的登录信息已过期，请重新登录！");
-				location.href="/web/login.html";
+				// location.href = "login.html";
 			}
 		});
 	});

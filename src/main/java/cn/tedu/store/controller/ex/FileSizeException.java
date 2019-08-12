@@ -1,11 +1,11 @@
 package cn.tedu.store.controller.ex;
 
 /**
- * 文件大小异常，通常为上传的文件的大小超出了限制
+ * 上传的文件大小超出了限制
  */
 public class FileSizeException extends FileUploadException {
 
-	private static final long serialVersionUID = 5302269116229851354L;
+	private static final long serialVersionUID = 3652563516851916279L;
 
 	public FileSizeException() {
 		super();

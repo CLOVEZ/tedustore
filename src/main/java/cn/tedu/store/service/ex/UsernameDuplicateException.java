@@ -1,12 +1,11 @@
 package cn.tedu.store.service.ex;
 
 /**
- * 用户名冲突异常
+ * 用户名冲突异常，例如尝试注册已经被占用的用户名
  */
-public class UsernameDuplicateException 
-	extends ServiceException {
+public class UsernameDuplicateException extends ServiceException {
 
-	private static final long serialVersionUID = 3164055183124220212L;
+	private static final long serialVersionUID = -1224474172375139228L;
 
 	public UsernameDuplicateException() {
 		super();

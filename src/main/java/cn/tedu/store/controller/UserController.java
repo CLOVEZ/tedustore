@@ -18,181 +18,152 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import cn.tedu.store.controller.ex.FileEmptyException;
-import cn.tedu.store.controller.ex.FileIOException;
 import cn.tedu.store.controller.ex.FileSizeException;
 import cn.tedu.store.controller.ex.FileStateException;
-import cn.tedu.store.controller.ex.FileTypeException;
+import cn.tedu.store.controller.ex.FileUploadIOException;
 import cn.tedu.store.entity.User;
 import cn.tedu.store.service.IUserService;
-import cn.tedu.store.util.ResponseResult;
+import cn.tedu.store.util.JsonResult;
 
+/**
+ * 处理用户相关请求的控制器
+ */
 @RestController
 @RequestMapping("users")
 public class UserController extends BaseController {
 	
 	@Autowired
 	private IUserService userService;
-
 	
 	@RequestMapping("reg")
-	public ResponseResult<Void> reg(User user) {
-		// 执行注册
+	public JsonResult<Void> reg(User user) {
 		userService.reg(user);
-		// 返回成功
-		return new ResponseResult<>(SUCCESS);
-	}
-
-	@RequestMapping("login")
-	public ResponseResult<User> login(
-			String username, String password, 
-			HttpSession session) {
-		// 检查用户名与密码的格式
-		
-		// 调用业务层对象的login()方法执行登录
-		User result = userService.login(username, password);
-		// 将登录结果中的uid封装到session中
-		session.setAttribute("uid", result.getUid());
-		// 将登录结果中的username封装到session中
-		session.setAttribute("username", result.getUsername());
-		// 返回结果
-		return new ResponseResult<>(SUCCESS, result);
+		return new JsonResult<>(SUCCESS);
 	}
 	
+	@RequestMapping("login")
+	public JsonResult<User> login(String username, String password, HttpSession session) {
+		// 调用业务层对象的“登录”方法，获取返回结果
+		User data = userService.login(username, password);
+		// 向Session中存入用户id和用户名
+		session.setAttribute("uid", data.getUid());
+		session.setAttribute("username", data.getUsername());
+		// 返回
+		return new JsonResult<>(SUCCESS, data);
+	}
+
 	@RequestMapping("change_password")
-	public ResponseResult<Void> changePassword(
+	public JsonResult<Void> changePassword(
 		@RequestParam("old_password") String oldPassword,
 		@RequestParam("new_password") String newPassword, 
 		HttpSession session) {
 		// 从session中获取uid
 		Integer uid = getUidFromSession(session);
 		// 从session中获取username
-		String username = session.getAttribute("username").toString();
-		// 调用业务层对象执行修改密码
+		String username = getUsernameFromSession(session);
+		// 调用service对象执行修改密码
 		userService.changePassword(uid, oldPassword, newPassword, username);
-		// 返回操作成功
-		return new ResponseResult<>(SUCCESS);
+		// 响应成功
+		return new JsonResult<>(SUCCESS);
 	}
-	
+
 	@RequestMapping("change_info")
-	public ResponseResult<Void> changeInfo(
-		User user, HttpSession session) {
-		// 获取uid
+	public JsonResult<Void> changeInfo(User user, HttpSession session) {
+		// 从session中获取uid和username
 		Integer uid = getUidFromSession(session);
-		// 获取用户名
-		String username = session.getAttribute("username").toString();
-		// 将uid和用户名封装到参数user对象中
-		user.setUid(uid);
-		user.setModifiedUser(username);
-		// 调用业务层对象执行修改个人资料
-		userService.changeInfo(user);
-		// 返回操作成功
-		return new ResponseResult<>(SUCCESS);
+		String username = getUsernameFromSession(session);
+		// 执行修改
+		userService.changeInfo(uid, username, user);
+		// 返回成功
+		return new JsonResult<>(SUCCESS);
 	}
-	
-	@GetMapping("details")
-	public ResponseResult<User> getByUid(
-			HttpSession session) {
-		// 获取uid
+
+	@GetMapping("get_by_uid")
+	public JsonResult<User> getByUid(HttpSession session) {
+		// 执行获取数据
 		Integer uid = getUidFromSession(session);
-		// 调用业务层对象执行获取数据
 		User data = userService.getByUid(uid);
-		// 返回操作成功及数据
-		return new ResponseResult<>(SUCCESS, data);
+		// 返回成功与数据
+		return new JsonResult<>(SUCCESS, data);
 	}
 	
 	/**
-	 * 上传头像的文件夹名称
+	 * 允许上传的头像文件的最大大小
 	 */
-	public static final String UPLOAD_DIR = "upload";
+	public static final long AVATAR_MAX_SIZE = 2 * 1024 * 1024;
 	/**
-	 * 上传头像的最大大小
+	 * 允许上传的头像文件的类型列表
 	 */
-	public static final long UPLOAD_AVATAR_MAX_SIZE = 1 * 1024 * 1024;
-	/**
-	 * 上传头像的文件类型
-	 */
-	public static final List<String> UPLOAD_AVATAR_TYPES = new ArrayList<>();
+	public static final List<String> AVATAR_CONTENT_TYPES = new ArrayList<String>();
 	
 	static {
-		UPLOAD_AVATAR_TYPES.add("image/jpg");
-		UPLOAD_AVATAR_TYPES.add("image/png");
+		AVATAR_CONTENT_TYPES.add("image/jpeg");
+		AVATAR_CONTENT_TYPES.add("image/png");
 	}
 	
 	@PostMapping("change_avatar")
-	public ResponseResult<String> changeAvatar(
-		HttpServletRequest request, 
-		@RequestParam("avatar") MultipartFile avatar, 
-		HttpSession session) {
-		// 检查是否选择了有效文件提交的请求
-		if (avatar.isEmpty()) {
-			// 抛出异常：FileEmptyException
+	public JsonResult<String> changeAvatar(
+		@RequestParam("file") MultipartFile file, 
+		HttpServletRequest request) {
+		// 检查文件是否为空
+		if (file.isEmpty()) {
 			throw new FileEmptyException(
-				"上传头像失败！未选择头像文件，或选择的文件为空！");
+				"上传头像失败！请选择有效的图片文件！");
 		}
 		
-		// 检查文件大小是否超标
-		long size = avatar.getSize();
-		if (size > UPLOAD_AVATAR_MAX_SIZE) {
-			// 抛出异常：FileSizeException
+		// 检查文件大小是否超出限制
+		if (file.getSize() > AVATAR_MAX_SIZE) {
 			throw new FileSizeException(
-				"上传头像失败！不允许使用超过" + UPLOAD_AVATAR_MAX_SIZE / 1024 + "KB的文件！");
+				"上传头像失败！不允许上传超过" + (AVATAR_MAX_SIZE / 1024) + "KB的图片文件！");
 		}
 		
-		// 检查文件类型是否在允许的范围之内
-		String contentType = avatar.getContentType();
-		if (!UPLOAD_AVATAR_TYPES.contains(contentType)) {
-			// 抛出异常：FileTypeException
-			throw new FileTypeException(
-				"上传头像失败！不支持所提交的文件类型！允许的文件类型有：" + UPLOAD_AVATAR_TYPES);
+		// 检查文件类型是否超出限制
+		if (!AVATAR_CONTENT_TYPES.contains(file.getContentType())) {
+			throw new FileSizeException(
+				"上传头像失败！选择的文件类型超出了限制！\r\r允许使用的文件类型有：" + AVATAR_CONTENT_TYPES);
 		}
 		
-		// 确定保存到哪个文件夹
-		String parentPath = request
-				.getServletContext()
-					.getRealPath(UPLOAD_DIR);
+		// 确定文件夹
+		String parentPath = request.getServletContext().getRealPath("upload");
 		File parent = new File(parentPath);
 		if (!parent.exists()) {
 			parent.mkdirs();
 		}
 		
-		// 确定保存的文件名
-		String originalFilename = avatar.getOriginalFilename();
-		String suffix = "";
+		// 确定文件名
+		String filename = UUID.randomUUID().toString();
+		String originalFilename = file.getOriginalFilename();
 		int beginIndex = originalFilename.lastIndexOf(".");
-		if (beginIndex != -1) {
-			suffix = originalFilename.substring(beginIndex);
-		}
-		String child = UUID.randomUUID().toString() + suffix;
+		String suffix = originalFilename.substring(beginIndex);
+		String child = filename + suffix;
 		
-		// 确定保存到哪个文件
+		// 保存用户上传的文件
 		File dest = new File(parent, child);
-		// 保存头像文件
 		try {
-			avatar.transferTo(dest);
+			file.transferTo(dest);
 		} catch (IllegalStateException e) {
-			// 抛出异常：FileStateException
 			throw new FileStateException(
-				"上传头像失败！所选择的文件已经不可用！");
+				"上传文件失败！文件状态有误，请重新尝试！");
 		} catch (IOException e) {
-			// 抛出异常：FileIOException
-			throw new FileIOException(
-				"上传头像失败！读写数据时出现错误！");
+			throw new FileUploadIOException(
+				"上传文件失败！发生读写错误，请重新尝试！");
 		}
 		
-		// 执行修改头像
-		Integer uid = getUidFromSession(session);
-		String username = session.getAttribute("username").toString();
-		String avatarPath = "/" + UPLOAD_DIR + "/" + child;
+		// 将文件的路径记录到数据库
+		String avatarPath = "/upload/" + child;
+		Integer uid = getUidFromSession(request.getSession());
+		String username = getUsernameFromSession(request.getSession());
 		userService.changeAvatar(uid, avatarPath, username);
 		
-		// 返回
-		ResponseResult<String> rr = new ResponseResult<>();
-		rr.setState(SUCCESS);
-		rr.setData(avatarPath);
-		return rr;
+		// 响应结果
+		return new JsonResult<>(SUCCESS, avatarPath);
 	}
 	
 }
+
+
+
+
 
 
 

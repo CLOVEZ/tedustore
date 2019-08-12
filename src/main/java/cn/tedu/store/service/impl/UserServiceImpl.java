@@ -16,250 +16,238 @@ import cn.tedu.store.service.ex.UpdateException;
 import cn.tedu.store.service.ex.UserNotFoundException;
 import cn.tedu.store.service.ex.UsernameDuplicateException;
 
+/**
+ * 处理用户数据的业务层实现类
+ */
 @Service
-public class UserServiceImpl 
-	implements IUserService {
-
-	@Autowired 
-	private UserMapper userMapper;
+public class UserServiceImpl implements IUserService {
 	
+	@Autowired
+	private UserMapper userMapper;
+
 	@Override
 	public void reg(User user) throws UsernameDuplicateException, InsertException {
-		// 根据尝试注册的用户名查询数据
-		User result = 
-				userMapper.findByUsername(
-					user.getUsername());
-		// 判断查询结果是否为null
-		if (result == null) {
-			// 是：允许注册
-			// 封装is_delete
-			user.setIsDelete(0);
-			// 封装日志
-			Date now = new Date();
-			user.setCreatedUser(user.getUsername());
-			user.setCreatedTime(now);
-			user.setModifiedUser(user.getUsername());
-			user.setModifiedTime(now);
-			// 密码加密
-			// - 生成随机盐
-			String salt = UUID.randomUUID().toString().toUpperCase();
-			// - 基于原密码和盐值执行加密
-			String md5Password = getMd5Password(
-					user.getPassword(), salt);
-			// - 将盐和加密结果封装到user对象中
-			user.setSalt(salt);
-			user.setPassword(md5Password);
-			// 执行注册
-			Integer rows = userMapper.insert(user);
-			if (rows != 1) {
-				throw new InsertException(
-					"注册时发生未知错误，请联系系统管理员！");
-			}
-		} else {
-			// 否：不允许注册，抛出异常
+		// 根据参数user中的getUsername()获取尝试注册的用户名
+		String username = user.getUsername();
+		// 根据以上用户名查询用户数据
+		User result = userMapper.findByUsername(username);
+		// 判断查询结果是否不为null
+		if (result != null) {
+			// 是：用户名已经被占用，抛出UsernameDuplicateException
 			throw new UsernameDuplicateException(
-				"尝试注册的用户名(" + user.getUsername() + ")已经被占用！");
+				"注册失败！尝试注册的用户名(" + username + ")已经被占用！");
+		}
+		
+		// 用户名未被占用，允许注册
+		// 向参数user中补全属性：盐值
+		String salt = UUID.randomUUID().toString().toUpperCase();
+		user.setSalt(salt);
+		// 取出参数user中的原始密码
+		String password = user.getPassword();
+		// 将原始密码加密
+		String md5Password = getMd5Password(password, salt);
+		// 向参数user中补全属性：加密后的密码
+		user.setPassword(md5Password);
+		// 向参数user中补全属性：isDelete-0
+		user.setIsDelete(0);
+		// 向参数user中补全属性：4项日志
+		Date now = new Date();
+		user.setCreatedUser(username);
+		user.setCreatedTime(now);
+		user.setModifiedUser(username);
+		user.setModifiedTime(now);
+		// 执行注册
+		Integer rows = userMapper.addnew(user);
+		if (rows != 1) {
+			throw new InsertException(
+				"注册失败！插入用户数据时出现未知错误！请联系管理员！");
 		}
 	}
 
 	@Override
 	public User login(String username, String password) throws UserNotFoundException, PasswordNotMatchException {
-		// 根据参数username查询匹配的用户信息
+		// 根据参数username执行查询
 		User result = userMapper.findByUsername(username);
-	    // 判断查询结果是否为null
+		// 判断查询结果是否为null
 		if (result == null) {
-			// 是：用户名对应的数据不存在，抛出UserNotFoundException
+			// 是：抛出UserNotFoundException
 			throw new UserNotFoundException(
-				"登录失败，用户名不存在！");
+				"登录失败！用户数据不存在！");
 		}
-
-	    // 判断isDelete值是否为1
-		if (result.getIsDelete() == 1) {
-			// 是：用户标记为“已删除”，抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"登录失败，用户名不存在！");
-		}
-
-	    // 基于盐值和参数password执行加密
-		String salt = result.getSalt();
-		String md5Password = getMd5Password(password, salt);
 		
-	    // 判断加密后的密码与查询结果中的密码是否不匹配
-		if (!result.getPassword().equals(md5Password)) {
-			// 是：密码不匹配，抛出PasswordNotMatchException
+		// 判断查询结果中的isDelete是否为1
+		if (result.getIsDelete() == 1) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"登录失败！用户数据不存在！");
+		}
+
+		// 从查询结果中获取盐值
+		String salt = result.getSalt();
+		// 基于参数password和盐值执行加密
+		String md5Password = getMd5Password(password, salt);
+		// 判断以上加密结果与查询结果中的password是否不匹配
+		if (!md5Password.equals(result.getPassword())) {
+			// 是：抛出PasswordNotMatchException
 			throw new PasswordNotMatchException(
 				"登录失败！密码错误！");
 		}
 
-	    // 将查询结果中的salt, password, isDelete设置为null
-		result.setSalt(null);
+		// 将查询结果中的password设置为null
 		result.setPassword(null);
-		result.setIsDelete(null);
-	    // 返回查询结果
-		return result;
-	}
-
-	@Override
-	public void changeInfo(User user) throws UserNotFoundException, UpdateException {
-		// 从参数user中获取uid
-		Integer uid = user.getUid();
-		// 调用持久层对象的方法，根据uid查询用户数据
-		User result = userMapper.findByUid(uid);
-
-		// 判断查询结果是否为null
-		if (result == null) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"修改个人资料错误！尝试访问的用户数据不存在！");
-		}
-
-		// 判断查询结果中的isDelete是否为1
-		if (result.getIsDelete() == 1) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"修改个人资料错误！尝试访问的用户数据不存在！");
-		}
-
-		// 创建当前时间对象，封装到user中
-		user.setModifiedTime(new Date());
-		// TODO 确保modifiedUser属性是有值的
-
-		// 调用持久层对象执行修改，并获取返回值（即受影响的行数）
-		Integer rows = userMapper.updateInfo(user);
-		// 判断返回值是否不为1
-		if (rows != 1) {
-			// 是：抛出UpdateException
-			throw new UpdateException(
-				"修改个人资料错误！更新数据时发生未知错误！");
-		}
-	}
-	
-	@Override
-	public void changePassword(Integer uid, String oldPassword, String newPassword, String username)
-			throws UserNotFoundException, PasswordNotMatchException, UpdateException {
-		// 根据参数uid查询用户数据
-		User result = userMapper.findByUid(uid);
-
-		// 判断查询结果是否为null
-		if (result == null) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"修改密码错误！尝试访问的用户数据不存在！");
-		}
-
-		// 判断查询结果中的isDelete是否为1
-		if (result.getIsDelete() == 1) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"修改密码错误！尝试访问的用户数据不存在！");
-		}
-
-		// 取出查询结果中的盐值
-		String salt = result.getSalt();
-		// 基于参数oldPassword和盐值执行加密
-		String oldMd5Password = getMd5Password(oldPassword, salt);
-		// 判断加密结果与查询结果中的密码是否不匹配
-		if (!result.getPassword().equals(oldMd5Password)) {
-			// 是：抛出PasswordNotMatchException
-			throw new PasswordNotMatchException(
-				"修改密码错误！原密码错误！");
-		}
-
-		// 基于参数newPassword和盐值执行加密
-		String newMd5Password = getMd5Password(newPassword, salt);
-		// 创建当前时间对象，作为最后修改时间
-		Date now = new Date();
-		// 调用持久层执行更新密码（新密码是以上加密的结果），并获取返回值
-		Integer rows = userMapper.updatePassword(uid, newMd5Password, username, now);
-		// 判断返回值是否不为1
-		if (rows != 1) {
-			// 是：抛出UpdateException
-			throw new UpdateException(
-				"修改密码错误！更新数据时发生未知错误！");
-		}
-	}
-	
-	@Override
-	public void changeAvatar(Integer uid, String avatar, String username)
-			throws UserNotFoundException, UpdateException {
-		// 根据参数uid查询用户数据
-		User result = userMapper.findByUid(uid);
-
-		// 判断查询结果是否为null
-		if (result == null) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"修改头像错误！尝试访问的用户数据不存在！");
-		}
-
-		// 判断查询结果中的isDelete是否为1
-		if (result.getIsDelete() == 1) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"修改头像错误！尝试访问的用户数据不存在！");
-		}
-		
-		// 创建当前时间对象
-		Date now = new Date();
-		// 调用持久层的方法执行更新头像，并获取返回值
-		Integer rows = userMapper.updateAvatar(uid, avatar, username, now);
-		// 判断返回值是否不为1，是，抛出异常
-		if (rows != 1) {
-			// 是：抛出UpdateException
-			throw new UpdateException(
-				"修改头像错误！更新数据时发生未知错误！");
-		}
-	}
-	
-	@Override
-	public User getByUid(Integer uid) throws UserNotFoundException
-	{
-		// 根据参数uid查询用户数据
-		User result = userMapper.findByUid(uid);
-
-		// 判断查询结果是否为null
-		if (result == null) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"获取用户信息失败！尝试访问的用户数据不存在！");
-		}
-
-		// 判断查询结果中的isDelete是否为1
-		if (result.getIsDelete() == 1) {
-			// 是：抛出UserNotFoundException
-			throw new UserNotFoundException(
-				"获取用户信息失败！尝试访问的用户数据不存在！");
-		}
-		
-		// 将查询结果中的password/salt/isDelete设置为null
-		result.setPassword(null);
+		// 将查询结果中的salt设置为null
 		result.setSalt(null);
+		// 将查询结果中的isDelete设置为null
 		result.setIsDelete(null);
-		
 		// 返回查询结果
 		return result;
 	}
 
+	@Override
+	public void changePassword(Integer uid, String oldPassword, String newPassword, String modifiedUser)
+			throws UserNotFoundException, PasswordNotMatchException, UpdateException {
+		// 根据参数uid查询用户数据
+		User result = userMapper.findByUid(uid);
+		// 判断查询结果是否为null：UserNotFoundException
+		if (result == null) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"修改密码失败！用户数据不存在！");
+		}
+
+		// 判断查询结果中的isDelete是否为1：UserNotFoundException
+		if (result.getIsDelete() == 1) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"修改密码失败！用户数据不存在！");
+		}
+		
+		// 从查询结果中获取盐值
+		String salt = result.getSalt();
+		// 对参数oldPassword执行加密，得到oldMd5Password
+		String oldMd5Password = getMd5Password(oldPassword, salt);
+		// 判断查询结果中的密码与oldMd5Password是否不匹配：PasswordNotMatchException
+		if (!result.getPassword().equals(oldMd5Password)) {
+			// 是：抛出PasswordNotMatchException
+			throw new PasswordNotMatchException(
+				"修改密码失败！原密码错误！");
+		}
+
+		// 对参数newPassword执行加密，得到newMd5Passowrd
+		String newMd5Password = getMd5Password(newPassword, salt);
+		// 执行更新，获取返回值(受影响的行数)
+		Integer rows = userMapper.updatePassword(uid, newMd5Password, modifiedUser, new Date());
+		// 判断受影响的行数是否不为1：UpdateException
+		if (rows != 1) {
+			throw new UpdateException(
+				"修改密码失败！更新数据时出现未知错误！");
+		}
+	}
+
+	@Override
+	public void changeInfo(Integer uid, String username, User user) throws UserNotFoundException, UpdateException {
+		// 根据参数uid查询用户数据
+		User result = userMapper.findByUid(uid);
+		// 判断查询结果是否为null：UserNotFoundException
+		if (result == null) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"修改个人资料失败！用户数据不存在！");
+		}
+
+		// 判断查询结果中的isDelete是否为1：UserNotFoundException
+		if (result.getIsDelete() == 1) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"修改个人资料失败！用户数据不存在！");
+		}
+		
+		// 将参数uid和参数username封装到参数user的uid和modifiedUser属性中
+		user.setUid(uid);
+		user.setModifiedUser(username);
+		user.setModifiedTime(new Date());
+		// 执行更新，获取返回值(受影响的行数)
+		Integer rows = userMapper.updateInfo(user);
+		// 判断受影响的行数是否不为1：UpdateException
+		if (rows != 1) {
+			throw new UpdateException(
+				"修改个人资料失败！更新数据时出现未知错误！");
+		}
+	}
+
+	@Override
+	public User getByUid(Integer uid) throws UserNotFoundException {
+		// 根据参数uid查询用户数据
+		User result = userMapper.findByUid(uid);
+		// 判断查询结果是否为null：UserNotFoundException
+		if (result == null) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"获取用户资料失败！用户数据不存在！");
+		}
+
+		// 判断查询结果中的isDelete是否为1：UserNotFoundException
+		if (result.getIsDelete() == 1) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"获取用户资料失败！用户数据不存在！");
+		}
+		
+		// 将查询结果中不相关的数据设置为null
+		User user = new User();
+		user.setUsername(result.getUsername());
+		user.setPhone(result.getPhone());
+		user.setEmail(result.getEmail());
+		user.setGender(result.getGender());
+		// 返回查询结果
+		return user;
+	}
+
+	@Override
+	public void changeAvatar(Integer uid, String avatar, String modifiedUser)
+			throws UserNotFoundException, UpdateException {
+		// 根据参数uid查询用户数据
+		User result = userMapper.findByUid(uid);
+		// 判断查询结果是否为null：UserNotFoundException
+		if (result == null) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"修改头像失败！用户数据不存在！");
+		}
+
+		// 判断查询结果中的isDelete是否为1：UserNotFoundException
+		if (result.getIsDelete() == 1) {
+			// 是：抛出UserNotFoundException
+			throw new UserNotFoundException(
+				"修改头像失败！用户数据不存在！");
+		}
+		
+		// 执行更新，获取返回值(受影响的行数)
+		Integer rows = userMapper.updateAvatar(uid, avatar, modifiedUser, new Date());
+		// 判断受影响的行数是否不为1：UpdateException
+		if (rows != 1) {
+			throw new UpdateException(
+				"修改头像失败！更新数据时出现未知错误！");
+		}
+	}
+	
 	/**
-	 * 将密码执行加密
+	 * 执行密码加密，获取加密后的密码
 	 * @param password 原密码
 	 * @param salt 盐值
-	 * @return 加密后的结果
+	 * @return 加密后的密码
 	 */
 	private String getMd5Password(String password, String salt) {
-		// 拼接原密码与盐值
+		// 加密规则：使用“salt+password+salt”作为消息，执行3次摘要运算
 		String str = salt + password + salt;
-		// 循环加密5次
-		for (int i = 0; i < 5; i++) {
-			str = DigestUtils.md5DigestAsHex(
-					str.getBytes()).toUpperCase();
+		for (int i = 0; i < 3; i++) {
+			str = DigestUtils.md5DigestAsHex(str.getBytes()).toUpperCase();
 		}
-		// 返回结果
 		return str;
 	}
 
+	
 }
-
 
 
 

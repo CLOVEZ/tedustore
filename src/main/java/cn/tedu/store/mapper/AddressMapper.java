@@ -17,10 +17,10 @@ public interface AddressMapper {
 	 * @param address 收货地址数据
 	 * @return 受影响的行数
 	 */
-	Integer insert(Address address);
+	Integer addnew(Address address);
 	
 	/**
-	 * 删除收货地址数据
+	 * 根据收货地址数据的id删除收货地址
 	 * @param aid 收货地址数据的id
 	 * @return 受影响的行数
 	 */
@@ -28,18 +28,18 @@ public interface AddressMapper {
 	
 	/**
 	 * 将指定的收货地址设置为默认
-	 * @param aid 即将被设置为默认的收货地址数据的id
-	 * @param modifiedUser 修改执行人
-	 * @param modifiedTime 修改时间
+	 * @param aid 收货地址的id
+	 * @param username 当前登录的用户名
+	 * @param modifiedTime 操作时间
 	 * @return 受影响的行数
 	 */
 	Integer updateDefault(
 			@Param("aid") Integer aid, 
-			@Param("modifiedUser") String modifiedUser, 
+			@Param("username") String username, 
 			@Param("modifiedTime") Date modifiedTime);
 
 	/**
-	 * 将某用户的所有收货地址全部设置为非默认
+	 * 将指定用户的收货地址全部设置为非默认
 	 * @param uid 用户的id
 	 * @return 受影响的行数
 	 */
@@ -48,29 +48,29 @@ public interface AddressMapper {
 	/**
 	 * 统计某用户的收货地址的数量
 	 * @param uid 用户的id
-	 * @return 收货地址的数量
+	 * @return 用户的收货地址的数量
 	 */
 	Integer countByUid(Integer uid);
 	
 	/**
-	 * 根据用户id查询该用户的收货地址数据列表
-	 * @param uid 用户id
-	 * @return 该用户的收货地址数据列表
-	 */
-	List<Address> findByUid(Integer uid);
-
-	/**
-	 * 根据收货地址id查询收货地址数据
+	 * 根据收货地址id查询收货地址详情
 	 * @param aid 收货地址id
-	 * @return 匹配的收货地址数据，如果没有匹配的数据，则返回null
+	 * @return 匹配的收货地址详情，如果没有匹配的数据，则返回null
 	 */
 	Address findByAid(Integer aid);
 	
 	/**
-	 * 查询某用户的最后修改的1条收货地址数据
+	 * 查询某用户最后修改的收货地址数据
 	 * @param uid 用户的id
-	 * @return 最后修改的1条收货地址数据
+	 * @return 该用户最后修改的收货地址数据
 	 */
 	Address findLastModified(Integer uid);
+	
+	/**
+	 * 获取某用户的收货地址数据的列表
+	 * @param uid 用户的id
+	 * @return 用户的收货地址数据的列表
+	 */
+	List<Address> findByUid(Integer uid);
 	
 }

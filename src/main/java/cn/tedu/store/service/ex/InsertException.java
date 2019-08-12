@@ -3,10 +3,9 @@ package cn.tedu.store.service.ex;
 /**
  * 插入数据异常
  */
-public class InsertException 
-	extends ServiceException {
+public class InsertException extends ServiceException {
 
-	private static final long serialVersionUID = 6801857127830170250L;
+	private static final long serialVersionUID = 7991875652328476596L;
 
 	public InsertException() {
 		super();

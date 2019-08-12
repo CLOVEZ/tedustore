@@ -7,7 +7,7 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://localhost:3306/student_store?characterEncoding=utf8&useSSL=false&serverTimezone=UTC
       username: root
-      password: My.799597505
+      password: 123456
       filters: stat, wallmlog4j,config
       max-active: 100
       initial-size: 1

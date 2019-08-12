@@ -287,9 +287,8 @@
 
 		</footer>
 		<!--页脚结束-->
-		
 	<script type="text/javascript">
-	$(document).ready(function(){
+	$(document).ready(function() {
 		showHotList();
 	});
 	
@@ -297,30 +296,26 @@
 		$("#hot-list").empty();
 		
 		$.ajax({
-			"url":"/goods/hot",
-			"type":"GET",
+			"url":"/products/hot",
+			"type":"get",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					var list = json.data;
-					for (var i = 0; i < list.length; i++) {
-						console.log(list[i].title);
+			"success":function(obj) {
+				var list = obj.data;
+				console.log("count=" + list.length);
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].title);
+					var html = '<div class="col-md-12">'
+						+ '<div class="col-md-7 text-row-2"><a href="product.html?id=#{id}">#{title}</a></div>'
+						+ '<div class="col-md-2">¥#{price}</div>'
+						+ '<div class="col-md-3"><img src="..#{image}collect.png" class="img-responsive" /></div>'
+						+ '</div>';
 						
-						var html = '<div class="col-md-12">'
-							+ '<div class="col-md-7 text-row-2"><a href="product.html?id=#{id}">#{title}</a></div>'
-							+ '<div class="col-md-2">¥#{price}</div>'
-							+ '<div class="col-md-3"><img src="..#{image}collect.png" class="img-responsive" /></div>'
-							+ '</div>';
+					html = html.replace(/#{id}/g, list[i].id);
+					html = html.replace(/#{title}/g, list[i].title);
+					html = html.replace(/#{price}/g, list[i].price);
+					html = html.replace(/#{image}/g, list[i].image);
 						
-						html = html.replace(/#{id}/g, list[i].id);
-						html = html.replace(/#{title}/g, list[i].title);
-						html = html.replace(/#{price}/g, list[i].price);
-						html = html.replace(/#{image}/g, list[i].image);
-							
-						$("#hot-list").append(html);
-					}
-				} else {
-					alert(json.message);
+					$("#hot-list").append(html);
 				}
 			}
 		});

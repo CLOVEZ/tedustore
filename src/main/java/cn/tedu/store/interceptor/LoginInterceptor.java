@@ -6,19 +6,22 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
-public class LoginInterceptor implements HandlerInterceptor {
+/**
+ * 登录拦截器
+ */
+public class LoginInterceptor 
+	implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		// 获取session对象
+		// 获取HttpSession对象
 		HttpSession session = request.getSession();
-		// 尝试从session中获取用户的uid（因为登录后session中肯定有uid）
-		Object uid = session.getAttribute("uid");
-		// 判断是否正确的获取到了uid
-		if (uid == null) {
-			// 尝试获取uid失败，意味着用户没有登录，或登录已超
+		// 判断session中是否有登录信息
+		if (session.getAttribute("uid") == null) {
+			// 没有登录信息，则重定向到登录页
 			response.sendRedirect("/web/login.html");
+			// 执行拦截
 			return false;
 		}
 		// 放行
@@ -26,8 +29,3 @@ public class LoginInterceptor implements HandlerInterceptor {
 	}
 
 }
-
-
-
-
-

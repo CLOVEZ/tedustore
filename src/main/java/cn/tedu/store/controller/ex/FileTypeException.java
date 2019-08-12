@@ -1,11 +1,11 @@
 package cn.tedu.store.controller.ex;
 
 /**
- * 文件类型异常，通常是尝试上传不支持的类型的文件
+ * 上传的文件类型超出了限制
  */
 public class FileTypeException extends FileUploadException {
 
-	private static final long serialVersionUID = -4668299874374727452L;
+	private static final long serialVersionUID = -3691055657464755670L;
 
 	public FileTypeException() {
 		super();

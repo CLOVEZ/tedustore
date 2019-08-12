@@ -2,20 +2,19 @@ package cn.tedu.store.entity;
 
 /**
  * 用户数据的实体类
- * @see BaseEntity
  */
 public class User extends BaseEntity {
 	
-	private static final long serialVersionUID = -3302907460554699349L;
+	private static final long serialVersionUID = 8728544650298610456L;
 	
 	private Integer uid;
 	private String username;
 	private String password;
 	private String salt;
-	private String avatar;
+	private Integer gender;
 	private String phone;
 	private String email;
-	private Integer gender;
+	private String avatar;
 	private Integer isDelete;
 
 	public Integer getUid() {
@@ -50,12 +49,12 @@ public class User extends BaseEntity {
 		this.salt = salt;
 	}
 
-	public String getAvatar() {
-		return avatar;
+	public Integer getGender() {
+		return gender;
 	}
 
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
+	public void setGender(Integer gender) {
+		this.gender = gender;
 	}
 
 	public String getPhone() {
@@ -74,12 +73,12 @@ public class User extends BaseEntity {
 		this.email = email;
 	}
 
-	public Integer getGender() {
-		return gender;
+	public String getAvatar() {
+		return avatar;
 	}
 
-	public void setGender(Integer gender) {
-		this.gender = gender;
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public Integer getIsDelete() {
@@ -91,9 +90,34 @@ public class User extends BaseEntity {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (uid == null) {
+			if (other.uid != null)
+				return false;
+		} else if (!uid.equals(other.uid))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
-		return "User [uid=" + uid + ", username=" + username + ", password=" + password + ", salt=" + salt + ", avatar="
-				+ avatar + ", phone=" + phone + ", email=" + email + ", gender=" + gender + ", isDelete=" + isDelete
+		return "User [uid=" + uid + ", username=" + username + ", password=" + password + ", salt=" + salt + ", gender="
+				+ gender + ", phone=" + phone + ", email=" + email + ", avatar=" + avatar + ", isDelete=" + isDelete
 				+ "]";
 	}
 }

@@ -20,7 +20,6 @@
 		<link rel="stylesheet" type="text/css" href="../css/top.css" />
 		<link rel="stylesheet" type="text/css" href="../css/footer.css" />
 		<link rel="stylesheet" type="text/css" href="../css/cart.css" />
-		<script src="../js/cart.js" type="text/javascript" charset="utf-8"></script>
 	</head>
 
 	<body>
@@ -96,7 +95,7 @@
 						<p class="panel-title"><span class="fa fa-shopping-cart"></span> 购物车</p>
 					</div>
 					<div class="panel-body">
-						<form role="form">
+						<form action="orderConfirm.html" method="get" role="form">
 							<!--购物车表格开始-->
 							<table class="cart-table" width="100%">
 								<thead>
@@ -174,7 +173,7 @@
 							</div>
 							<div>
 								<span class="pull-right">
-								<input type="button" value="  结  算  " class="btn btn-primary btn-lg link-account" />
+								<input type="submit" value="  结  算  " class="btn btn-primary btn-lg link-account" />
 							</span>
 							</div>
 						</form>
@@ -267,16 +266,8 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
-		<script type="text/javascript">
-			$(function() {
-				//返回链接
-				$(".link-account").click(function() {
-					location.href = "orderConfirm.html";
-				})
-			})
-		</script>
 	<script type="text/javascript">
-	$(document).ready(function(){
+	$(document).ready(function() {
 		showCartList();
 	});
 	
@@ -285,40 +276,61 @@
 		
 		$.ajax({
 			"url":"/carts/",
-			"type":"GET",
+			"type":"get",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					var list = json.data;
-					for (var i = 0; i < list.length; i++) {
-						console.log(list[i].title);
+			"success":function(obj) {
+				var list = obj.data;
+				console.log("count=" + list.length);
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].title);
+					var html = '<tr>'
+						+ '<td><input name="cids" value="#{cid}" type="checkbox" class="ckitem" /></td>'
+						+ '<td><img src="..#{image}collect.png" class="img-responsive" /></td>'
+						+ '<td><div>#{title}</div><div style="color:#f00; font-size:10px;">#{spreadPrice}</div></td>'
+						+ '<td>¥<span id="goodsPrice1">#{realPrice}</span></td>'
+						+ '<td>'
+						+ '<input type="button" value="-" class="num-btn" onclick="reduceNum(#{cid})" />'
+						+ '<input id="num" type="text" size="2" readonly="readonly" class="num-text" value="#{num}">'
+						+ '<input type="button" value="+" class="num-btn" onclick="addNum(#{cid})" />'
+						+ '</td>'
+						+ '<td>¥<span id="goodsCast1">#{totalPrice}</span></td>'
+						+ '<td><input type="button" onclick="deleteByCid(#{cid})" class="cart-del btn btn-default btn-xs" value="删除" /></td>'
+						+ '</tr>';
 						
-						var html = '<tr>'
-							+ '<td><input type="checkbox" class="ckitem" /></td>'
-							+ '<td><img src="..#{goods-image}collect.png" class="img-responsive" /></td>'
-							+ '<td>#{goods-title}</td>'
-							+ '<td>¥<span id="goods-price-#{cid}">#{goods-price}</span></td>'
-							+ '<td>'
-							+ '<input type="button" value="-" class="num-btn" onclick="reduceNum(1)" />'
-							+ '<input id="goods-num-#{cid}" type="text" size="2" readonly="readonly" class="num-text" value="#{goods-num}">'
-							+ '<input class="num-btn" type="button" value="+" onclick="addNum(#{cid})" />'
-							+ '</td>'
-							+ '<td>¥<span id="goods-total-price-#{cid}">#{total-price}</span>.00</td>'
-							+ '<td><input type="button" onclick="delCartItem(this)" class="cart-del btn btn-default btn-xs" value="删除" /></td>'
-							+ '</tr>';
-						
-						html = html.replace(/#{cid}/g, list[i].cid);
-						html = html.replace(/#{goods-title}/g, list[i].title);
-						html = html.replace(/#{goods-image}/g, list[i].image);
-						html = html.replace(/#{goods-price}/g, list[i].price);
-						html = html.replace(/#{goods-num}/g, list[i].num);
-						html = html.replace(/#{total-price}/g, list[i].num * list[i].price);
-						
-						$("#cart-list").append(html);
+					html = html.replace(/#{cid}/g, list[i].cid);
+					html = html.replace(/#{image}/g, list[i].image);
+					html = html.replace(/#{title}/g, list[i].title);
+					html = html.replace(/#{realPrice}/g, list[i].realPrice);
+					html = html.replace(/#{num}/g, list[i].num);
+					html = html.replace(/#{totalPrice}/g, list[i].realPrice * list[i].num);
+					
+					if (list[i].realPrice < list[i].price) {
+						html = html.replace(/#{spreadPrice}/g, "比加入时降价" + (list[i].price - list[i].realPrice) + "元");
+					} else {
+						html = html.replace(/#{spreadPrice}/g, "");
 					}
-				} else {
-					alert(json.message);
+						
+					$("#cart-list").append(html);
 				}
+			}
+		});
+	}
+	
+	function deleteByCid(cid) {
+		$.ajax({
+			"url":"/carts/" + cid + "/delete",
+			"type":"post",
+			"dataType":"json",
+			"success":function(obj) {
+				if (obj.state == 2000) {
+					showCartList();
+				} else {
+					alert(obj.message);
+				}
+			},
+			"error":function() {
+				alert("您的登录信息已过期，请重新登录！");
+				// location.href = "login.html";
 			}
 		});
 	}
@@ -328,20 +340,42 @@
 			"url":"/carts/" + cid + "/add_num",
 			"type":"post",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					// showCartList();
-					$("#goods-num-" + cid).val(json.data);
-					var price = parseInt($("#goods-price-" + cid).html());
-					var totalPrice = price * json.data;
-					$("#goods-total-price-" + cid).html(totalPrice);
+			"success":function(obj) {
+				if (obj.state == 2000) {
+					// alert("修改成功！");
+					showCartList();
 				} else {
-					alert(json.message);
+					alert(obj.message);
 				}
 			},
 			"error":function() {
 				alert("您的登录信息已过期，请重新登录！");
-				location.href="/web/login.html";
+				// location.href = "login.html";
+			}
+		});
+	}
+	
+	function reduceNum(cid) {
+		var num = $("#num").val();
+		if (num == 1) {
+			return;
+		}
+		
+		$.ajax({
+			"url":"/carts/" + cid + "/reduce_num",
+			"type":"post",
+			"dataType":"json",
+			"success":function(obj) {
+				if (obj.state == 2000) {
+					// alert("修改成功！");
+					showCartList();
+				} else {
+					alert(obj.message);
+				}
+			},
+			"error":function() {
+				alert("您的登录信息已过期，请重新登录！");
+				// location.href = "login.html";
 			}
 		});
 	}

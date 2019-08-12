@@ -1,11 +1,11 @@
 package cn.tedu.store.controller.ex;
 
 /**
- * 上传文件时操作状态异常
+ * 保存文件时文件状态异常
  */
 public class FileStateException extends FileUploadException {
 
-	private static final long serialVersionUID = -8640003773675166181L;
+	private static final long serialVersionUID = -7150153238399934786L;
 
 	public FileStateException() {
 		super();

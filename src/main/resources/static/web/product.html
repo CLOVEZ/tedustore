@@ -23,6 +23,7 @@
 		<link rel="stylesheet" type="text/css" href="../css/imgmove.css" />
 		<script src="../js/product.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../js/imgmove.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery-getUrlParam.js" type="text/javascript" charset="utf-8"></script>
 	</head>
 
 	<body>
@@ -96,50 +97,49 @@
 			<div class="col-md-offset-1 col-md-10">
 				<div class="col-md-6">
 					<div data="1" class="img-big move-img col-md-12">
-						<img id="goods-image-1-big" src="../images/portal/11DELLran7000R1605Ssilvery/1_big.png" class="img-responsive" />
+						<img id="product-image-1-big" src="../images/portal/11DELLran7000R1605Ssilvery/1_big.png" class="img-responsive" />
 					</div>
 					<div data="2" class="img-big move-img col-md-12">
-						<img id="goods-image-2-big" src="../images/portal/11DELLran7000R1605Ssilvery/2_big.png" class="img-responsive" />
+						<img id="product-image-2-big" src="../images/portal/11DELLran7000R1605Ssilvery/2_big.png" class="img-responsive" />
 					</div>
 					<div data="3" class="img-big move-img col-md-12">
-						<img id="goods-image-3-big" src="../images/portal/11DELLran7000R1605Ssilvery/3_big.png" class="img-responsive" />
+						<img id="product-image-3-big" src="../images/portal/11DELLran7000R1605Ssilvery/3_big.png" class="img-responsive" />
 					</div>
 					<div data="4" class="img-big move-img col-md-12">
-						<img id="goods-image-4-big" src="../images/portal/11DELLran7000R1605Ssilvery/4_big.png" class="img-responsive" />
+						<img id="product-image-4-big" src="../images/portal/11DELLran7000R1605Ssilvery/4_big.png" class="img-responsive" />
 					</div>
 					<div data="5" class="img-big move-img col-md-12">
-						<img id="goods-image-5-big" src="../images/portal/11DELLran7000R1605Ssilvery/5_big.png" class="img-responsive" />
+						<img id="product-image-5-big" src="../images/portal/11DELLran7000R1605Ssilvery/5_big.png" class="img-responsive" />
 					</div>
 					<div data="1" class="col-md-2 img-small">
-						<img id="goods-image-1" src="../images/portal/11DELLran7000R1605Ssilvery/1.jpg" class="img-responsive" />
+						<img id="product-image-1" src="../images/portal/11DELLran7000R1605Ssilvery/1.jpg" class="img-responsive" />
 					</div>
 					<div data="2" class="col-md-2 img-small">
-						<img id="goods-image-2" src="../images/portal/11DELLran7000R1605Ssilvery/2.jpg" class="img-responsive" />
+						<img id="product-image-2" src="../images/portal/11DELLran7000R1605Ssilvery/2.jpg" class="img-responsive" />
 					</div>
 					<div data="3" class="col-md-2 img-small">
-						<img id="goods-image-3" src="../images/portal/11DELLran7000R1605Ssilvery/3.jpg" class="img-responsive" />
+						<img id="product-image-3" src="../images/portal/11DELLran7000R1605Ssilvery/3.jpg" class="img-responsive" />
 					</div>
 					<div data="4" class="col-md-2 img-small">
-						<img id="goods-image-4" src="../images/portal/11DELLran7000R1605Ssilvery/4.jpg" class="img-responsive" />
+						<img id="product-image-4" src="../images/portal/11DELLran7000R1605Ssilvery/4.jpg" class="img-responsive" />
 					</div>
 					<div data="5" class="col-md-2 img-small">
-						<img id="goods-image-5" src="../images/portal/11DELLran7000R1605Ssilvery/5.jpg" class="img-responsive" />
+						<img id="product-image-5" src="../images/portal/11DELLran7000R1605Ssilvery/5.jpg" class="img-responsive" />
 					</div>
 				</div>
 				<div class="col-md-6">
-					<h1 id="goods-title" class="col-md-12 title-row-1" title="">戴尔Dell 燃700R1605银色</h1>
-					<p class="col-md-12 text-row-1"><small id="goods-sell-point">仅上海，广州，沈阳仓有货！预购从速！</small></p>
+					<h1 id="product-title" class="col-md-12">戴尔Dell 燃700R1605银色</h1>
+					<p class="col-md-12 text-row-1"><small id="product-sell-point">仅上海，广州，沈阳仓有货！预购从速！</small></p>
 					<div class="col-md-12 price-bar">
-						<small>学员售价：</small> ¥<span id="goods-price">4899</span>.00
+						<small>学员售价：</small> ¥<span id="product-price">4899</span>.00
 						<div><small>*退货补运费 *7天无理由退货 *24小时快速退款 </small></div>
 					</div>
-					<form id="form-add-to-cart" class="form-inline product-form col-md-12" role="form">
+					<form class="form-inline product-form col-md-12" role="form">
 						<div class="col-md-12 form-space">
 							<label for="num">数量：</label>
 							<input id="numDown" type="button" value="-" class="num-btn" />
-							<input name="num" id="num" type="text" size="2" readonly="readonly" class="num-text" value="1">
+							<input id="num" type="text" size="2" readonly="readonly" class="num-text" value="1">
 							<input id="numUp" class="num-btn" type="button" value="+" />
-							<input id="gid" name="gid" value="" type="hidden" />
 						</div>
 						<div class="col-md-12 form-space">
 							<p><small><b>学子商城</b>发货并提供售后服务,今日下单,明日送达</small></p>
@@ -296,65 +296,61 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
-	<script type="text/javascript" src="../js/jquery-getUrlParam.js"></script>
 	<script type="text/javascript">
+	var id = $.getUrlParam("id");
+	console.log("id=" + id);
+	
 	$(document).ready(function() {
-		var id = $.getUrlParam("id");
-		console.log("id=" + id);
-		$("#gid").val(id);
-		showGoodsDetails(id);
+		showProductDetails();
+		
+		$("#btn-add-to-cart").click(function() {
+			addToCart();
+		});
 	});
 	
-	function showGoodsDetails(id) {
+	function addToCart() {
 		$.ajax({
-			"url":"/goods/" + id + "/details",
-			"type":"GET",
+			"url":"/carts/add_to_cart",
+			"data":"pid=" + id + "&num=" + $("#num").val(),
+			"type":"post",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					$("#goods-title").html(json.data.title);
-					$("#goods-sell-point").html(json.data.sellPoint);
-					$("#goods-price").html(json.data.price);
+			"success":function(obj) {
+				if (obj.state == 2000) {
+					alert("添加成功！");
+				} else {
+					alert(obj.message);
+				}
+			},
+			"error":function() {
+				alert("您还没有登录，或登录信息已过期，请重新登录！");
+				// location.href = "login.html";
+			}
+		});
+	}
+	
+	function showProductDetails() {
+		$.ajax({
+			"url":"/products/" + id + "/details",
+			"type":"get",
+			"dataType":"json",
+			"success":function(obj) {
+				if (obj.state == 2000) {
+					$("#product-title").html(obj.data.title);
+					$("#product-sell-point").html(obj.data.sellPoint);
+					$("#product-price").html(obj.data.price);
 					
 					for (var i = 1; i <= 5; i++) {
-						$("#goods-image-" + i + "-big").attr("src", ".." + json.data.image + i + "_big.png");
-						$("#goods-image-" + i).attr("src", ".." + json.data.image + i + ".jpg");
+						$("#product-image-" + i + "-big").attr("src", ".." + obj.data.image + i + "_big.png");
+						$("#product-image-" + i).attr("src", ".." + obj.data.image + i + ".jpg");
 					}
-				} else {
-					alert(json.message);
+				} else if (obj.state == 4006) {
+					alert(obj.message);
+					location.href = "index.html";
 				}
 			}
 		});
 	}
 	</script>
-	<script type="text/javascript">
-	$("#btn-add-to-cart").click(function(){
-		$.ajax({
-			"url":"/carts/add_to_cart",
-			"data":$("#form-add-to-cart").serialize(),
-			"type":"post",
-			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					alert("添加成功！");
-				} else {
-					alert(json.message);
-				}
-			},
-			"error":function() {
-				alert("您还没有登录，或登录信息已过期，请登录后再执行操作！");
-				location.href="/web/login.html";
-			}
-		});
-	});
-	</script>
 	</body>
 
 </html>
-
-
-
-
-
-
-

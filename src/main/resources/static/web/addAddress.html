@@ -137,32 +137,32 @@
 					</ul>
 					<div class="panel-body">
 						<!--新增收货地址表单开始-->
-						<form id="form-addnew" class="form-horizontal" role="form">
+						<form id="form-create" class="form-horizontal" role="form">
 							<div class="form-group">
 								<label class="col-md-2 control-label"><span class="txtred">*</span>收货人：</label>
 								<div class="col-md-8">
-									<input type="text" name="name" class="form-control" placeholder="请输入收货人姓名">
+									<input name="name" type="text" class="form-control" placeholder="请输入收货人姓名">
 								</div>
 							</div>
 							<div class="address_content" data-toggle="distpicker">
 								<div class="form-group">
 									<label class="col-md-2 control-label"><span class="txtred">*</span>省/直辖市：</label>
 									<div class="col-md-3">
-										<select name="province" class="form-control" data-province="---- 选择省 ----" id="province"></select>
+										<select name="provinceCode" class="form-control" data-province="---- 选择省 ----" id="province"></select>
 									</div>
 									<label class="col-md-2 control-label"><span class="txtred">*</span>城市：</label>
 									<div class="col-md-3">
-										<select name="city" class="form-control" data-city="---- 选择市 ----" id="city"></select>
+										<select name="cityCode" class="form-control" data-city="---- 选择市 ----" id="city"></select>
 									</div>
 								</div>
 								<div class="form-group ">
 									<label class="col-md-2 control-label"><span class="txtred">*</span>区县：</label>
 									<div class="col-md-3">
-										<select name="area" class="form-control" data-district="---- 选择区 ----" id="area"></select>
+										<select name="areaCode" class="form-control" data-district="---- 选择区 ----" id="area"></select>
 									</div>
 									<label class="col-md-2 control-label">邮政编码：</label>
 									<div class="col-md-3">
-										<input type="text" name="zip" maxlength="6" class="form-control" placeholder="请输入邮政编码">
+										<input name="zip" type="text" class="form-control" placeholder="请输入邮政编码">
 									</div>
 								</div>
 							</div>
@@ -175,23 +175,23 @@
 							<div class="form-group">
 								<label class="col-md-2 control-label"><span class="txtred">*</span>手机：</label>
 								<div class="col-md-3">
-									<input type="text" name="phone" class="form-control" placeholder="请输入手机号码">
+									<input name="phone" type="text" class="form-control" placeholder="请输入手机号码">
 								</div>
 								<label class="col-md-2 control-label">固话：</label>
 								<div class="col-md-3">
-									<input type="text" name="tel" class="form-control" placeholder="请输入固定电话号码">
+									<input name="tel" type="text" class="form-control" placeholder="请输入固定电话号码">
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-md-2 control-label">地址类型：</label>
 								<div class="col-md-8">
-									<input type="text" name="tag" class="form-control" placeholder="请输入地址类型，如：家、公司或者学校">
+									<input name="tag" type="text" class="form-control" placeholder="请输入地址类型，如：家、公司或者学校">
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-md-2 control-label"><a href="address.html">返回</a>&nbsp;&nbsp;&nbsp;</label>
 								<div class="col-sm-10">
-									<input type="button" id="btn-addnew" class="col-md-1 btn btn-primary" value="保存" />
+									<input id="btn-create" type="button" class="col-md-1 btn btn-primary" value="保存" />
 									<input type="reset" class="col-md-offset-1 col-md-1 btn btn-primary" value="重置" />
 								</div>
 							</div>
@@ -286,79 +286,54 @@
 		</footer>
 		<!--页脚结束-->
 	<script type="text/javascript">
-	$("#btn-addnew").click(function(){
-		$.ajax({
-			"url":"/addresses/addnew",
-			"data":$("#form-addnew").serialize(),
-			"type":"post",
-			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					alert("增加成功！");
-					// $("#form-addnew")[0].reset();
-				} else {
-					alert(json.message);
-				}
-			},
-			"error":function() {
-				alert("您的登录信息已过期，请重新登录！");
-				location.href="/web/login.html";
-			}
-		});
-	});
-	</script>
-	<script type="text/javascript">
-	$(document).ready(function(){
+	var defaultOption = '<option value="0">----- 请选择 -----</option>';
+	
+	$(document).ready(function() {
 		showProvinceList();
 		
-		$("#province").change(function() {
-			$("#city").empty();
-			$("#area").empty();
-			$("#area").append('<option value="0">----- 请选择 -----</option>');
-			
-			showCityList();
+		$("#btn-create").click(function(){
+			create();	
 		});
-
-		$("#city").change(function() {
-			$("#area").empty();
+		
+		$("#province").change(function() {
+			showCityList();
 			
+			$("#area").empty();
+			$("#area").append(defaultOption);
+		});
+			
+		$("#city").change(function() {
 			showAreaList();
 		});
 		
-		$("#city").append('<option value="0">----- 请选择 -----</option>');
-		$("#area").append('<option value="0">----- 请选择 -----</option>');
+		$("#province").append(defaultOption);
+		$("#city").append(defaultOption);
+		$("#area").append(defaultOption);
 	});
 	
 	function showProvinceList() {
-		$("#province").append('<option value="0">----- 请选择 -----</option>');
-		
 		$.ajax({
 			"url":"/districts/",
 			"data":"parent=86",
-			"type":"GET",
+			"type":"get",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					var list = json.data;
-					for (var i = 0; i < list.length; i++) {
-						console.log(list[i].name);
-						var op = '<option value="' 
-							+ list[i].code + '">' 
-							+ list[i].name + '</option>';
-						$("#province").append(op);
-					}
-				} else {
-					alert(json.message);
+			"success":function(obj) {
+				var list = obj.data;
+				console.log("count=" + list.length);
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].name);
+					var op = '<option value="' + list[i].code + '">' + list[i].name + '</option>';
+					$("#province").append(op);
 				}
 			}
 		});
 	}
 	
 	function showCityList() {
+		$("#city").empty();
+		$("#city").append(defaultOption);
+		
 		var provinceCode = $("#province").val();
-		
-		$("#city").append('<option value="0">----- 请选择 -----</option>');
-		
 		if (provinceCode == 0) {
 			return;
 		}
@@ -366,59 +341,62 @@
 		$.ajax({
 			"url":"/districts/",
 			"data":"parent=" + provinceCode,
-			"type":"GET",
+			"type":"get",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					var list = json.data;
-					for (var i = 0; i < list.length; i++) {
-						console.log(list[i].name);
-						var op = '<option value="' 
-							+ list[i].code + '">' 
-							+ list[i].name + '</option>';
-						$("#city").append(op);
-					}
-				} else {
-					alert(json.message);
+			"success":function(obj) {
+				var list = obj.data;
+				console.log("count=" + list.length);
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].name);
+					var op = '<option value="' + list[i].code + '">' + list[i].name + '</option>';
+					$("#city").append(op);
 				}
-			},
-			"error":function() {
-				alert("您的登录信息已过期，请重新登录！");
-				location.href="/web/login.html";
 			}
 		});
 	}
 	
 	function showAreaList() {
-		var cityCode = $("#city").val();
+		$("#area").empty();
+		$("#area").append(defaultOption);
 		
+		var cityCode = $("#city").val();
 		if (cityCode == 0) {
-			$("#area").append('<option value="0">----- 请选择 -----</option>');
 			return;
 		}
 		
 		$.ajax({
 			"url":"/districts/",
 			"data":"parent=" + cityCode,
-			"type":"GET",
+			"type":"get",
 			"dataType":"json",
-			"success":function(json) {
-				if (json.state == 200) {
-					var list = json.data;
-					for (var i = 0; i < list.length; i++) {
-						console.log(list[i].name);
-						var op = '<option value="' 
-							+ list[i].code + '">' 
-							+ list[i].name + '</option>';
-						$("#area").append(op);
-					}
+			"success":function(obj) {
+				var list = obj.data;
+				console.log("count=" + list.length);
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].name);
+					var op = '<option value="' + list[i].code + '">' + list[i].name + '</option>';
+					$("#area").append(op);
+				}
+			}
+		});
+	}
+	
+	function create() {
+		$.ajax({
+			"url":"/addresses/create",
+			"data":$("#form-create").serialize(),
+			"type":"post",
+			"dataType":"json",
+			"success":function(obj) {
+				if (obj.state == 2000) {
+					alert("增加成功！");
 				} else {
-					alert(json.message);
+					alert(obj.message);
 				}
 			},
 			"error":function() {
 				alert("您的登录信息已过期，请重新登录！");
-				location.href="/web/login.html";
+				// location.href = "login.html";
 			}
 		});
 	}
